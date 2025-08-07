@@ -163,7 +163,24 @@ export default function Home() {
       showModal(
         'success',
         'Заявка зарегистрирована!',
-        <>Благодарим за регистрацию 🎉<br/><b>Регистрация на мастер-классы и олимпиады проходит отдельно через соответствующие разделы сайта.</b></>,
+        <>
+          Благодарим за регистрацию 🎉<br/>
+          <b>Регистрация на мастер-классы и олимпиады проходит отдельно через соответствующие разделы сайта.</b>
+          <div className="flex gap-3 mt-4">
+            <a 
+              href="/masters" 
+              className="flex-1 border-2 border-[#344EAD] text-[#344EAD] px-4 py-2 rounded-lg text-center font-medium hover:bg-[#344EAD] hover:text-white transition-colors"
+            >
+              Мастер-классы
+            </a>
+            <a 
+              href="/olympiads" 
+              className="flex-1 border-2 border-[#344EAD] text-[#344EAD] px-4 py-2 rounded-lg text-center font-medium hover:bg-[#344EAD] hover:text-white transition-colors"
+            >
+              Олимпиады
+            </a>
+          </div>
+        </>
       );
       
       // Reset form
@@ -220,7 +237,7 @@ export default function Home() {
           </h1>
           <p className="text-xl sm:text-2xl md:text-3xl mb-4 font-medium">11:00 Главный корпус НГУ</p>
           <p className="text-base sm:text-lg md:text-xl text-gray-200 mb-8 leading-relaxed">
-            Фестиваль науки &quot;ФизФест&quot; — масштабное событие, организуемое студентами и молодыми учеными Новосибирского государственного университета с целью популяризации физики среди школьников и общественности. Участники смогут не только увлекательно провести время, но и пополнить свои знания в области естествознания, приобщиться к фундаментальной науке, познакомиться с учеными-практиками.
+            Фестиваль науки &quot;ФизФест&quot; — масштабное событие, организуемое студентами и&nbsp;молодыми учеными Новосибирского государственного университета с&nbsp;целью популяризации физики среди школьников и&nbsp;общественности. Участники смогут не&nbsp;только увлекательно провести время, но&nbsp;и&nbsp;пополнить свои знания в&nbsp;области естествознания, приобщиться к&nbsp;фундаментальной науке, познакомиться с&nbsp;учеными&#8209;практиками.
           </p>
           <a href="#register" className="bg-white text-[#344EAD] font-semibold px-8 py-4 text-lg rounded-xl shadow-lg hover:bg-gray-100 transition-all duration-300 hover:shadow-xl">
             Зарегистрироваться
@@ -260,14 +277,14 @@ export default function Home() {
               {/* Мастер-классы */}
               <a 
                 href="/masters" 
-                className="group border-2 border-[#344EAD] hover:bg-[#344EAD] transition-all duration-300 rounded-2xl p-8 flex flex-col items-center justify-center min-h-[200px] hover:shadow-lg"
+                className="group border-2 border-[#344EAD] hover:bg-[#344EAD] transition-all duration-300 rounded-2xl p-8 flex flex-col items-center justify-start min-h-[200px] hover:shadow-lg"
               >
                 <div className="text-center">
                   <h3 className="text-2xl font-bold text-[#344EAD] group-hover:text-white mb-4">
                     Регистрация <br/> на мастер-классы
                   </h3>
                   <p className="text-gray-600 group-hover:text-gray-200">
-                    Практические занятия с экспертами в области физики
+                    Практические занятия с&nbsp;экспертами в&nbsp;области физики
                   </p>
                 </div>
               </a>
@@ -275,14 +292,14 @@ export default function Home() {
               {/* Олимпиада */}
               <a 
                 href="/olimpiads" 
-                className="group border-2 border-[#344EAD] hover:bg-[#344EAD] transition-all duration-300 rounded-2xl p-8 flex flex-col items-center justify-center min-h-[200px] hover:shadow-lg"
+                className="group border-2 border-[#344EAD] hover:bg-[#344EAD] transition-all duration-300 rounded-2xl p-8 flex flex-col items-center justify-start min-h-[200px] hover:shadow-lg"
               >
                 <div className="text-center">
                   <h3 className="text-2xl font-bold text-[#344EAD] group-hover:text-white mb-4">
                     Регистрация <br/> на олимпиады
                   </h3>
                   <p className="text-gray-600 group-hover:text-gray-200">
-                    Участие в мини-олимпиадах по физике
+                    Участие в&nbsp;мини&#8209;олимпиадах по&nbsp;физике
                   </p>
                 </div>
               </a>

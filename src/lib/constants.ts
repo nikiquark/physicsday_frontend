@@ -5,7 +5,7 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const PROGRAM_ITEMS: ProgramItem[] = [
     {
-      title: "Экскурсии в научные институты Академгородка",
+      title: "Экскурсии в\u00A0научные институты Академгородка",
       image: "https://optim.tildacdn.com/tild3465-3031-4536-a361-636162353030/-/resize/800x600/-/format/webp/Street3.jpg.webp"
     },
     {
@@ -13,7 +13,7 @@ export const PROGRAM_ITEMS: ProgramItem[] = [
       image: "https://optim.tildacdn.com/tild3266-3863-4136-a437-663966666133/-/resize/800x600/-/format/webp/Dem2.jpg.webp"
     },
     {
-      title:"Встречи с ведущими учеными и экспертами в различных областях физики",
+      title:"Встречи с\u00A0ведущими учеными и\u00A0экспертами в\u00A0различных областях физики",
       image: "https://optim.tildacdn.com/tild3162-6533-4330-b762-666234333932/-/resize/800x600/-/format/webp/Pogosov3_2.jpg.webp"
     },
     {
@@ -33,7 +33,7 @@ export const PROGRAM_ITEMS: ProgramItem[] = [
       image: "https://optim.tildacdn.com/tild6435-3966-4331-b164-653962656466/-/resize/800x600/-/format/webp/83142585.jpg.webp"
     },
     {
-      title:"Призы и подарки от организаторов",
+      title:"Призы и\u00A0подарки от\u00A0организаторов",
       image: "https://optim.tildacdn.com/tild3837-3962-4464-b637-303739616330/-/resize/800x600/-/format/webp/image.png.webp"
     },
     {
@@ -45,7 +45,7 @@ export const PROGRAM_ITEMS: ProgramItem[] = [
 export const BENEFITS = [
   {
     icon: BookOpen,
-    title: "Кругозор и эрудиция",
+    title: "Кругозор и\u00A0эрудиция",
     description: "Шанс продемонстрировать широкий кругозор и эрудицию в области физики"
   },
   {
@@ -70,7 +70,7 @@ export const BENEFITS = [
   },
   {
     icon: Gift,
-    title: "Подарки и дипломы",
+    title: "Подарки и\u00A0дипломы",
     description: "Победители и призеры ФизФест - олимпиад будут награждены памятными подарками, все участники - дипломами"
   }
 ];

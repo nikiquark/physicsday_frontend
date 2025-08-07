@@ -237,7 +237,7 @@ export default function WorkshopsPage() {
         showModal(
           'success',
           'Регистрация прошла успешно!',
-          'Спасибо за регистрацию на мастер-класс! Подтверждение отправлено на указанный email.'
+          'Благодарим за регистрацию на мастер-класс 🎉'
         );
         
         // Refresh workshops data to get updated limit_left
@@ -383,7 +383,7 @@ export default function WorkshopsPage() {
       <section id="registration" className="py-20 bg-white px-4">
         <FadeInSection>
           <h2 className="text-center text-3xl font-bold mb-4">Регистрация на мастер-класс</h2>
-          <p className="text-center text-gray-600 mb-8">(только для школьников)</p>
+          <p className="text-center text-gray-600 mb-12 font-bold text-xl">(только для школьников)</p>
           
           {selectedWorkshopData && (
             <div className="max-w-xl mx-auto mb-8 p-6 bg-[#344EAD] text-white rounded-xl">

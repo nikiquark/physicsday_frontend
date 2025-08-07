@@ -61,7 +61,7 @@ const BenefitCard = ({ icon: Icon, title, description }: {
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
-      className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 flex items-start space-x-4 h-54"
+      className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 flex items-start space-x-4 h-48"
     >
       {/* <div className="flex-shrink-0">
         <img src="/cat.png" alt="Cat" className="w-12 h-12 object-contain" />
