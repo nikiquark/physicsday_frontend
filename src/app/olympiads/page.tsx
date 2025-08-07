@@ -266,7 +266,7 @@ export default function OlympiadPage() {
 
           <a 
             href="#register" 
-            className="inline-block bg-white text-[#344EAD] font-semibold px-8 py-4 text-lg rounded-xl shadow-lg hover:bg-gray-100 transition-all duration-300 hover:shadow-xl"
+            className="inline-block bg-white text-[#344EAD] font-semibold px-8 py-4 text-lg rounded-xl shadow-lg hover:bg-gray-100 transition-all duration-300 hover:shadow-xl mb-4"
           >
             Зарегистрироваться на олимпиаду
           </a>
