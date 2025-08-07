@@ -11,6 +11,7 @@ import { FadeInSection } from "@/components/animations/FadeInSection";
 import { FlyingCats } from "@/components/animations/FlyingCats";
 import { UserRole } from "@/lib/types";
 import { SequentialFadeIn } from "@/components/animations/SequentialFadeIn";
+import { getCookie } from "@/lib/cookie";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,12 +26,21 @@ const participantService = {
     school: string | null;
     class_number: number | null;
   }) {
+
+    const csrfToken = getCookie('csrftoken');
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    if (csrfToken) {
+      headers['X-CSRFToken'] = csrfToken;
+    }
+
     const response = await fetch(`${API_BASE_URL}/physicsday/participants`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
+      headers: headers,
+      credentials: 'include',
       body: JSON.stringify(participantData),
     });
 
