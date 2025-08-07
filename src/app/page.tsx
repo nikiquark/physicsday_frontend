@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useModal } from "@/hooks/useModal";
 import { Modal } from "@/components/ui/Modal";
-import { PROGRAM_ITEMS, USER_ROLES } from "@/lib/constants";
+import { API_BASE_URL, PROGRAM_ITEMS, USER_ROLES } from "@/lib/constants";
 import { FadeInSection } from "@/components/animations/FadeInSection";
 import { FlyingCats } from "@/components/animations/FlyingCats";
 import { UserRole } from "@/lib/types";
@@ -14,6 +14,34 @@ import { SequentialFadeIn } from "@/components/animations/SequentialFadeIn";
 
 const inter = Inter({ subsets: ["latin"] });
 
+// API service for participant registration
+const participantService = {
+  async create(participantData: {
+    role: string;
+    name: string;
+    email: string;
+    phone: string;
+    city: string;
+    school: string | null;
+    class_number: number | null;
+  }) {
+    const response = await fetch(`${API_BASE_URL}/physicsday/participants`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(participantData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
+  }
+};
 
 export default function Home() {
   const [role, setRole] = useState<UserRole>("Школьник");
@@ -37,63 +65,130 @@ export default function Home() {
     }));
   };
 
-  const handleSubmit = async (e: React.MouseEvent) => {
-    e.preventDefault();
+  const validateForm = () => {
+    const requiredFields = ['name', 'email', 'phone', 'city'];
+    const emptyFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
     
+    // For students, school and class are also required
+    if (role === "Школьник") {
+      if (!formData.school || !formData.class) {
+        emptyFields.push(...['school', 'class'].filter(field => !formData[field as keyof typeof formData]));
+      }
+    }
+    
+    if (emptyFields.length > 0) {
+      showModal(
+        'error',
+        'Заполните все поля',
+        'Все обязательные поля должны быть заполнены.'
+      );
+      return false;
+    }
+
     if (!formData.agreement) {
       showModal(
         'error',
         'Требуется согласие',
         'Необходимо дать согласие на обработку персональных данных для продолжения регистрации.'
       );
+      return false;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      showModal(
+        'error',
+        'Неверный формат email',
+        'Пожалуйста, введите корректный email адрес.'
+      );
+      return false;
+    }
+
+    // Validate class number for students
+    if (role === "Школьник" && formData.class) {
+      const classNum = parseInt(formData.class, 10);
+      if (isNaN(classNum) || classNum < 1 || classNum > 11) {
+        showModal(
+          'error',
+          'Неверный класс',
+          'Пожалуйста, введите номер класса от 1 до 11.'
+        );
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const submitData = {
-        ...formData,
-        role,
-        school: role === "Школьник" ? formData.school : "",
-        class: role === "Школьник" ? formData.class : ""
+      // Prepare data for API
+      const apiData = {
+        role: role,
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        city: formData.city.trim(),
+        ...(role === "Школьник" ? {
+          school: formData.school.trim(),
+          class_number: parseInt(formData.class, 10)
+        } : {
+          school: null,
+          class_number: null
+        })
       };
 
-      // const response = await fetch('http://localhost/api', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(submitData)
-      // });
-      const response = { ok: true};
+      // Send data to Django backend
+      const result = await participantService.create(apiData);
 
-      if (response.ok) {
-        showModal(
-          'success',
-          'Заявка зарегистрирована!',
-          <>Благодарим за регистрацию!<br/>  <b>Регистрация на мастер-классы и олимпиады проходит отдельно через соответствующие разделы сайта.</b></>,
-        );
-        // Сброс формы
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          city: '',
-          school: '',
-          class: '',
-          agreement: false
-        });
-        setRole("Школьник");
-      } else {
-        throw new Error('Ошибка отправки данных');
-      }
+      showModal(
+        'success',
+        'Заявка зарегистрирована!',
+        <>Благодарим за регистрацию 🎉<br/><b>Регистрация на мастер-классы и олимпиады проходит отдельно через соответствующие разделы сайта.</b></>,
+      );
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        city: '',
+        school: '',
+        class: '',
+        agreement: false
+      });
+      setRole("Школьник");
+
     } catch (error) {
-      console.error('Ошибка:', error);
+      console.error('Registration error:', error);
+      
+      let errorMessage = 'Произошла ошибка при регистрации. Попробуйте позже.';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('Failed to fetch')) {
+          errorMessage = 'Не удается подключиться к серверу. Проверьте подключение к интернету.';
+        } else if (error.message.includes('400')) {
+          errorMessage = 'Проверьте правильность заполнения всех полей.';
+        } else if (error.message.includes('500')) {
+          errorMessage = 'Ошибка сервера. Попробуйте позже.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       showModal(
         'error',
-        'Ошибка отправки',
-        'Произошла ошибка при отправке формы. Проверьте подключение к интернету и попробуйте еще раз.'
+        'Ошибка регистрации',
+        errorMessage
       );
     } finally {
       setIsSubmitting(false);
@@ -193,7 +288,7 @@ export default function Home() {
           <div className="max-w-xl mx-auto grid gap-6">
             <select
               name="role"
-              className="border p-3 rounded-xl w-full"
+              className="border border-gray-300 p-3 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#344EAD] focus:border-transparent"
               value={role}
               onChange={(e) => setRole(e.target.value as UserRole)}
               required
@@ -204,7 +299,7 @@ export default function Home() {
             </select>
             <input 
               name="name"
-              className="border p-3 rounded-xl w-full" 
+              className="border border-gray-300 p-3 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#344EAD] focus:border-transparent" 
               type="text" 
               placeholder="ФИО" 
               value={formData.name}
@@ -213,7 +308,7 @@ export default function Home() {
             />
             <input 
               name="email"
-              className="border p-3 rounded-xl w-full" 
+              className="border border-gray-300 p-3 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#344EAD] focus:border-transparent" 
               type="email" 
               placeholder="Email" 
               value={formData.email}
@@ -222,7 +317,7 @@ export default function Home() {
             />
             <input 
               name="phone"
-              className="border p-3 rounded-xl w-full" 
+              className="border border-gray-300 p-3 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#344EAD] focus:border-transparent" 
               type="tel" 
               placeholder="Телефон" 
               value={formData.phone}
@@ -231,7 +326,7 @@ export default function Home() {
             />
             <input 
               name="city"
-              className="border p-3 rounded-xl w-full" 
+              className="border border-gray-300 p-3 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#344EAD] focus:border-transparent" 
               type="text" 
               placeholder="Город" 
               value={formData.city}
@@ -242,34 +337,43 @@ export default function Home() {
               <>
                 <input 
                   name="school"
-                  className="border p-3 rounded-xl w-full" 
+                  className="border border-gray-300 p-3 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#344EAD] focus:border-transparent" 
                   type="text" 
                   placeholder="Школа" 
                   value={formData.school}
                   onChange={handleInputChange}
+                  required
                 />
                 <input 
                   name="class"
-                  className="border p-3 rounded-xl w-full" 
-                  type="text" 
-                  placeholder="Класс" 
+                  className="border border-gray-300 p-3 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#344EAD] focus:border-transparent" 
+                  type="number" 
+                  placeholder="Класс (1-11)" 
+                  min="1"
+                  max="11"
                   value={formData.class}
                   onChange={handleInputChange}
+                  required
                 />
               </>
             )}
-            <label className="flex items-center space-x-2">
+            <label className="flex items-center space-x-3">
               <input 
                 name="agreement"
                 type="checkbox" 
                 checked={formData.agreement}
                 onChange={handleInputChange}
+                className="w-5 h-5 text-[#344EAD] rounded focus:ring-[#344EAD]"
                 required 
               />
-              <span>Согласие на обработку данных</span>
+              <span className="text-gray-700">Я даю свое согласие на обработку персональных данных</span>
             </label>
             <button 
-              className="bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed" 
+              className={`py-3 rounded-xl font-semibold transition w-full ${
+                !isSubmitting
+                  ? 'bg-[#344EAD] text-white hover:bg-[#2a3f92]'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
               onClick={handleSubmit}
               disabled={isSubmitting}
             >

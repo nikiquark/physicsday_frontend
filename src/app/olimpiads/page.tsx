@@ -11,10 +11,38 @@ import { useModal } from "@/hooks/useModal";
 import { Modal } from "@/components/ui/Modal";
 import { FlyingCats } from "@/components/animations/FlyingCats";
 import { SequentialFadeIn } from "@/components/animations/SequentialFadeIn";
-import { BENEFITS } from "@/lib/constants";
+import { BENEFITS, API_BASE_URL } from "@/lib/constants";
 
 const inter = Inter({ subsets: ["latin"] });
 
+
+// API service for participant registration
+const participantService = {
+  async create(participantData: {
+    name: string;
+    email: string;
+    phone: string;
+    city: string;
+    school: string;
+    class_number: number;
+  }) {
+    const response = await fetch(`${API_BASE_URL}/olympiads/participants`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(participantData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
+  }
+};
 
 const BenefitCard = ({ icon: Icon, title, description }: {
   icon: LucideIcon;
@@ -62,30 +90,73 @@ export default function OlympiadPage() {
     }));
   };
 
-  const handleSubmit = async (e: React.MouseEvent) => {
-    e.preventDefault();
+  const validateForm = () => {
+    const requiredFields = ['name', 'email', 'phone', 'city', 'school', 'class_number'];
+    const emptyFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
     
+    if (emptyFields.length > 0) {
+      showModal(
+        'error',
+        'Заполните все поля',
+        'Все поля формы обязательны для заполнения.'
+      );
+      return false;
+    }
+
     if (!formData.agreement) {
       showModal(
         'error',
         'Требуется согласие',
         'Необходимо дать согласие на обработку персональных данных для продолжения регистрации.'
       );
+      return false;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      showModal(
+        'error',
+        'Неверный формат email',
+        'Пожалуйста, введите корректный email адрес.'
+      );
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
       return;
     }
 
     setIsSubmitting(true);
-    showModal('loading', 'Регистрация...', 'Пожалуйста, подождите...');
+    showModal('loading', 'Регистрация...', 'Отправляем ваши данные...');
 
-    // Мокирование API запроса
-    setTimeout(() => {
+    try {
+      // Prepare data for API (convert class_number to integer)
+      const apiData = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        city: formData.city.trim(),
+        school: formData.school.trim(),
+        class_number: parseInt(formData.class_number, 10)
+      };
+
+      // Send data to Django backend
+      const result = await participantService.create(apiData);
+      
       showModal(
         'success',
         'Регистрация прошла успешно!',
-        'Благодарим за регистрацию на олимпиаду!'
+        `Благодарим за регистрацию на олимпиаду 🎉`
       );
       
-      // Сброс формы
+      // Reset form
       setFormData({
         name: '',
         email: '',
@@ -96,8 +167,31 @@ export default function OlympiadPage() {
         agreement: false
       });
       
+    } catch (error) {
+      console.error('Registration error:', error);
+      
+      let errorMessage = 'Произошла ошибка при регистрации. Попробуйте позже.';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('Failed to fetch')) {
+          errorMessage = 'Не удается подключиться к серверу. Проверьте подключение к интернету.';
+        } else if (error.message.includes('400')) {
+          errorMessage = 'Проверьте правильность заполнения всех полей.';
+        } else if (error.message.includes('500')) {
+          errorMessage = 'Ошибка сервера. Попробуйте позже.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      showModal(
+        'error',
+        'Ошибка регистрации',
+        errorMessage
+      );
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Inter } from "next/font/google";
 import { motion } from "framer-motion";
 import { CheckCircle, Clock, MapPin, Users } from "lucide-react";
@@ -11,66 +11,33 @@ import { Modal } from "@/components/ui/Modal";
 import { useModal } from "@/hooks/useModal";
 import { FlyingCats } from "@/components/animations/FlyingCats";
 import { SequentialFadeIn } from "@/components/animations/SequentialFadeIn";
+import { API_BASE_URL } from "@/lib/constants";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// Мокированные данные мастер-классов
-const mockWorkshops = [
-  {
-    id: 1,
-    name: "Квантовая физика для начинающих",
-    restriction: "8-11 класс",
-    time: "14:00-15:30",
-    room: "Аудитория 2-05",
-    limit_left: 15,
-    image: "https://optim.tildacdn.com/tild6138-6365-4264-b738-353737633039/-/resize/800x600/-/format/webp/MasterClass.jpg.webp"
-  },
-  {
-    id: 2,
-    name: "Оптика и лазеры",
-    restriction: "9-11 класс",
-    time: "15:45-17:15",
-    room: "Лаборатория оптики",
-    limit_left: 8,
-    image: "https://optim.tildacdn.com/tild3266-3863-4136-a437-663966666133/-/resize/800x600/-/format/webp/Dem2.jpg.webp"
-  },
-  {
-    id: 3,
-    name: "Электроника и схемотехника",
-    restriction: "7-10 класс",
-    time: "14:00-15:30",
-    room: "Лаборатория электроники",
-    limit_left: 0,
-    image: "https://optim.tildacdn.com/tild3465-3031-4536-a361-636162353030/-/resize/800x600/-/format/webp/Street3.jpg.webp"
-  },
-  {
-    id: 4,
-    name: "Астрофизика и телескопы",
-    restriction: "6-11 класс",
-    time: "16:00-17:30",
-    room: "Планетарий НГУ",
-    limit_left: 22,
-    image: "https://optim.tildacdn.com/tild3162-6533-4330-b762-666234333932/-/resize/800x600/-/format/webp/Pogosov3_2.jpg.webp"
-  },
-  {
-    id: 5,
-    name: "Механика и робототехника",
-    restriction: "5-9 класс",
-    time: "13:00-14:30",
-    room: "Мастерская",
-    limit_left: 3,
-    image: "https://optim.tildacdn.com/tild6637-6461-4563-b336-366137323830/-/resize/800x600/-/format/webp/Quest.jpg.webp"
-  },
-  {
-    id: 6,
-    name: "Ядерная физика",
-    restriction: "10-11 класс",
-    time: "15:00-16:30",
-    room: "Аудитория 3-12",
-    limit_left: 12,
-    image: "https://optim.tildacdn.com/tild6435-3966-4331-b164-653962656466/-/resize/800x600/-/format/webp/83142585.jpg.webp"
-  }
-];
+
+// Types based on Django models
+interface Workshop {
+  id: number;
+  name: string;
+  restriction: string;
+  time: string;
+  room: string;
+  limit: number;
+  limit_left: number;
+  ordering: number;
+  image: string;
+}
+
+interface ParticipantData {
+  name: string;
+  email: string;
+  phone: string;
+  city: string;
+  school: string;
+  class_number: number;
+  workshop: number;
+}
 
 function getLimitText(x: number): string {
   if (x === 0) return 'Места закончились';
@@ -81,21 +48,18 @@ function getLimitText(x: number): string {
 }
 
 interface WorkshopCardProps {
-  workshop: {
-    id: number;
-    name: string;
-    restriction: string;
-    time: string;
-    room: string;
-    limit_left: number;
-    image: string;
-  };
+  workshop: Workshop;
   onSelect: (workshopId: number) => void;
   isSelected: boolean;
 }
 
 const WorkshopCard = ({ workshop, onSelect, isSelected }: WorkshopCardProps) => {
   const isAvailable = workshop.limit_left > 0;
+  
+  // Construct full image URL
+  const imageUrl = workshop.image.startsWith('http') 
+    ? workshop.image 
+    : `${API_BASE_URL}/media/${workshop.image}`;
   
   return (
     <motion.div
@@ -110,7 +74,7 @@ const WorkshopCard = ({ workshop, onSelect, isSelected }: WorkshopCardProps) => 
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${workshop.image})`
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${imageUrl})`
         }}
       />
       
@@ -148,9 +112,11 @@ const WorkshopCard = ({ workshop, onSelect, isSelected }: WorkshopCardProps) => 
 };
 
 export default function WorkshopsPage() {
-  const [workshops, setWorkshops] = useState(mockWorkshops);
+  const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const [selectedWorkshop, setSelectedWorkshop] = useState<number | null>(null);
   const [isOpen, modalContent, showModal, closeModal] = useModal();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -163,6 +129,27 @@ export default function WorkshopsPage() {
     agreement: false
   });
 
+  // Fetch workshops from API
+  useEffect(() => {
+    const fetchWorkshops = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/workshops/`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setWorkshops(data);
+      } catch (err) {
+        console.error('Error fetching workshops:', err);
+        setError('Не удалось загрузить список мастер-классов. Попробуйте обновить страницу.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWorkshops();
+  }, []);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     setFormData(prev => ({
@@ -170,7 +157,6 @@ export default function WorkshopsPage() {
       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
     }));
   };
-
 
   const handleWorkshopSelect = (workshopId: number) => {
     setSelectedWorkshop(workshopId);
@@ -202,33 +188,54 @@ export default function WorkshopsPage() {
       return;
     }
 
+    // Validate required fields
+    const requiredFields = ['name', 'email', 'phone', 'city', 'school', 'class_number'];
+    const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
+    
+    if (missingFields.length > 0) {
+      showModal(
+        'error',
+        'Заполните все поля',
+        'Пожалуйста, заполните все обязательные поля формы.'
+      );
+      return;
+    }
+
     setIsSubmitting(true);
     showModal('loading', 'Регистрация...', 'Пожалуйста, подождите...');
 
-    // Мокирование API запроса
-    setTimeout(() => {
-      const selectedWorkshopData = workshops.find(w => w.id === selectedWorkshop);
-      
-      if (!selectedWorkshopData || selectedWorkshopData.limit_left === 0) {
-        showModal(
-          'error',
-          'Места закончились',
-          'К сожалению, места на этот мастер-класс закончились.'
-        );
-      } else {
-        // Симулируем успешную регистрацию
+    try {
+      const participantData: ParticipantData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        city: formData.city,
+        school: formData.school,
+        class_number: parseInt(formData.class_number),
+        workshop: selectedWorkshop
+      };
+
+      const response = await fetch(`${API_BASE_URL}/workshops/participants`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(participantData),
+      });
+
+      if (response.ok) {
         showModal(
           'success',
           'Регистрация прошла успешно!',
           'Спасибо за регистрацию на мастер-класс! Подтверждение отправлено на указанный email.'
         );
         
-        // Обновляем количество мест
-        setWorkshops(prev => prev.map(w => 
-          w.id === selectedWorkshop 
-            ? { ...w, limit_left: Math.max(0, w.limit_left - 1) }
-            : w
-        ));
+        // Refresh workshops data to get updated limit_left
+        const workshopsResponse = await fetch(`${API_BASE_URL}/workshops/`);
+        if (workshopsResponse.ok) {
+          const updatedWorkshops = await workshopsResponse.json();
+          setWorkshops(updatedWorkshops);
+        }
         
         // Сброс формы
         setFormData({
@@ -241,13 +248,80 @@ export default function WorkshopsPage() {
           agreement: false
         });
         setSelectedWorkshop(null);
+        
+      } else if (response.status === 406) {
+        // Not Acceptable - workshop is full
+        showModal(
+          'error',
+          'Места закончились',
+          'К сожалению, места на этот мастер-класс закончились.'
+        );
+        
+        // Refresh workshops to update limit_left
+        const workshopsResponse = await fetch(`${API_BASE_URL}/workshops/`);
+        if (workshopsResponse.ok) {
+          const updatedWorkshops = await workshopsResponse.json();
+          setWorkshops(updatedWorkshops);
+        }
+        
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        showModal(
+          'error',
+          'Ошибка регистрации',
+          'Произошла ошибка при регистрации. Пожалуйста, проверьте данные и попробуйте снова.'
+        );
+        console.error('Registration error:', errorData);
       }
       
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      showModal(
+        'error',
+        'Ошибка соединения',
+        'Не удалось отправить данные. Проверьте интернет-соединение и попробуйте снова.'
+      );
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   const selectedWorkshopData = workshops.find(w => w.id === selectedWorkshop);
+
+  if (loading) {
+    return (
+      <main className="font-sans text-gray-900 scroll-smooth">
+        <Header />
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#344EAD] mx-auto"></div>
+            <p className="mt-4 text-gray-600">Загрузка мастер-классов...</p>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="font-sans text-gray-900 scroll-smooth">
+        <Header />
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="bg-[#344EAD] text-white px-6 py-2 rounded-xl hover:bg-[#2a3f92]"
+            >
+              Обновить страницу
+            </button>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
 
   return (
     <main className="font-sans text-gray-900 scroll-smooth">
@@ -274,17 +348,24 @@ export default function WorkshopsPage() {
           <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto px-4">
             Выберите интересующий вас мастер-класс, кликнув по карточке. После выбора вы сможете зарегистрироваться в форме ниже.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 max-w-7xl mx-auto">
-            {workshops.map((workshop, index) => (
-              <SequentialFadeIn key={workshop.id} index={index}>
-                <WorkshopCard
-                  workshop={workshop}
-                  onSelect={handleWorkshopSelect}
-                  isSelected={selectedWorkshop === workshop.id}
-                />
-              </SequentialFadeIn>
-            ))}
-          </div>
+          
+          {workshops.length === 0 ? (
+            <div className="text-center text-gray-600">
+              <p>Мастер-классы пока не доступны</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 max-w-7xl mx-auto">
+              {workshops.map((workshop, index) => (
+                <SequentialFadeIn key={workshop.id} index={index}>
+                  <WorkshopCard
+                    workshop={workshop}
+                    onSelect={handleWorkshopSelect}
+                    isSelected={selectedWorkshop === workshop.id}
+                  />
+                </SequentialFadeIn>
+              ))}
+            </div>
+          )}
         </FadeInSection>
       </section>
 
