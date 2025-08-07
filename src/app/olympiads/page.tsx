@@ -12,6 +12,7 @@ import { Modal } from "@/components/ui/Modal";
 import { FlyingCats } from "@/components/animations/FlyingCats";
 import { SequentialFadeIn } from "@/components/animations/SequentialFadeIn";
 import { BENEFITS, API_BASE_URL } from "@/lib/constants";
+import { getCookie } from "@/lib/cookie";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,12 +27,20 @@ const participantService = {
     school: string;
     class_number: number;
   }) {
+    const csrfToken = getCookie('csrftoken');
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    if (csrfToken) {
+      headers['X-CSRFToken'] = csrfToken;
+    }
+
     const response = await fetch(`${API_BASE_URL}/olympiads/participants`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
+      headers: headers,
+      credentials: 'include',
       body: JSON.stringify(participantData),
     });
 

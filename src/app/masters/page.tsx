@@ -12,6 +12,7 @@ import { useModal } from "@/hooks/useModal";
 import { FlyingCats } from "@/components/animations/FlyingCats";
 import { SequentialFadeIn } from "@/components/animations/SequentialFadeIn";
 import { API_BASE_URL } from "@/lib/constants";
+import { getCookie } from "@/lib/cookie";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -215,11 +216,20 @@ export default function WorkshopsPage() {
         workshop: selectedWorkshop
       };
 
+      const csrfToken = getCookie('csrftoken');
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      };
+
+      if (csrfToken) {
+        headers['X-CSRFToken'] = csrfToken;
+      }
+
       const response = await fetch(`${API_BASE_URL}/workshops/participants`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: headers,
+        credentials: 'include',
         body: JSON.stringify(participantData),
       });
 
