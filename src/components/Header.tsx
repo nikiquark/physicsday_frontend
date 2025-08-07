@@ -22,7 +22,7 @@ export default function Header() {
             <nav className="hidden lg:flex items-center space-x-4">
                 <Link href="/#about" className="hover:text-blue-600 transition">О фестивале</Link>
                 <Link href="/masters" className="hover:text-blue-600 transition">Мастер-классы</Link>
-                <Link href="/olimpiads" className="hover:text-blue-600 transition">Олимпиада</Link>
+                <Link href="/olympiads" className="hover:text-blue-600 transition">Олимпиада</Link>
                 <a href="#contacts" className="hover:text-blue-600 transition">Контакты</a>
                 <Link href="/#register" className="bg-[#344EAD] text-white px-4 py-2 rounded-xl font-semibold hover:bg-[#2a3f92] transition">Регистрация</Link>
             </nav>
@@ -36,7 +36,7 @@ export default function Header() {
             >
                 <Link onClick={() => setMenuOpen(false)} href="/#about" className="hover:text-blue-600 transition py-2">О фестивале</Link>
                 <Link onClick={() => setMenuOpen(false)} href="/masters" className="hover:text-blue-600 transition py-2">Мастер-классы</Link>
-                <Link onClick={() => setMenuOpen(false)} href="/olimpiads" className="hover:text-blue-600 transition py-2">Олимпиада</Link>
+                <Link onClick={() => setMenuOpen(false)} href="/olympiads" className="hover:text-blue-600 transition py-2">Олимпиада</Link>
                 <a onClick={() => setMenuOpen(false)} href="#contacts" className="hover:text-blue-600 transition py-2">Контакты</a>
                 <Link onClick={() => setMenuOpen(false)} href="/#register" className="bg-[#344EAD] text-white px-4 py-2 rounded-xl font-semibold hover:bg-[#2a3f92] transition text-center">Регистрация</Link>
             </motion.div>
