@@ -3,6 +3,7 @@ import type { IConfig } from 'next-sitemap';
 
 const config: IConfig = {
   siteUrl: 'https://physicsday.ru',
+  outDir: 'out',
   generateRobotsTxt: true, 
   sitemapSize: 7000, 
   exclude: ['/api'], // Исключённые пути
