@@ -6,39 +6,39 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export const PROGRAM_ITEMS: ProgramItem[] = [
     {
       title: "Экскурсии в\u00A0научные институты Академгородка",
-      image: "https://optim.tildacdn.com/tild3465-3031-4536-a361-636162353030/-/resize/800x600/-/format/webp/Street3.jpg.webp"
+      image: "/institutes.jpg"
     },
     {
       title:"Уникальные физические демонстрации",
-      image: "https://optim.tildacdn.com/tild3266-3863-4136-a437-663966666133/-/resize/800x600/-/format/webp/Dem2.jpg.webp"
+      image: "/dem.jpg"
     },
     {
       title:"Встречи с\u00A0ведущими учеными и\u00A0экспертами в\u00A0различных областях физики",
-      image: "https://optim.tildacdn.com/tild3162-6533-4330-b762-666234333932/-/resize/800x600/-/format/webp/Pogosov3_2.jpg.webp"
+      image: "/pogosov.jpg"
     },
     {
       title:"ФизКвест",
-      image: "https://optim.tildacdn.com/tild6637-6461-4563-b336-366137323830/-/resize/800x600/-/format/webp/Quest.jpg.webp"
+      image: "/quest.jpg"
     },
     {
       title:"Physics Street",
-      image: "https://optim.tildacdn.com/tild3465-3031-4536-a361-636162353030/-/resize/800x600/-/format/webp/Street3.jpg.webp"
+      image: "/street.jpg"
     },
     {
       title:"Мастер-классы",
-      image: "https://optim.tildacdn.com/tild6138-6365-4264-b738-353737633039/-/resize/800x600/-/format/webp/MasterClass.jpg.webp"
+      image: "/masters.jpg"
     },
     {
       title:"ФизФест-олимпиады",
-      image: "https://optim.tildacdn.com/tild6435-3966-4331-b164-653962656466/-/resize/800x600/-/format/webp/83142585.jpg.webp"
+      image: "/olympiads.jpg"
     },
     {
       title:"Призы и\u00A0подарки от\u00A0организаторов",
-      image: "https://optim.tildacdn.com/tild3837-3962-4464-b637-303739616330/-/resize/800x600/-/format/webp/image.png.webp"
+      image: "/presents.png"
     },
     {
       title:"",
-      image: "https://optim.tildacdn.com/tild3065-6538-4238-a433-623763623937/-/resize/800x600/-/format/webp/FF_Cat-12_1.png.webp"
+      image: "/cat1.png"
     }
 ];
 
