@@ -26,6 +26,33 @@ export interface WorkshopParticipantData extends BaseParticipantData {
   workshop: number;
 }
 
+// Response types for created participants (what DRF returns)
+export interface CreatedParticipant {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  city: string;
+  created_at?: string;
+}
+
+export interface CreatedPhysicsDayParticipant extends CreatedParticipant {
+  role: string;
+  school: string | null;
+  class_number: number | null;
+}
+
+export interface CreatedOlympiadParticipant extends CreatedParticipant {
+  school: string;
+  class_number: number;
+}
+
+export interface CreatedWorkshopParticipant extends CreatedParticipant {
+  school: string;
+  class_number: number;
+  workshop: number;
+}
+
 export interface Workshop {
   id: number;
   name: string;
@@ -43,10 +70,21 @@ export interface ApiResponse<T> {
   status: number;
 }
 
+// DRF standard error structure
+export interface DRFFieldError {
+  [fieldName: string]: string[];
+}
+
+export interface DRFErrorDetails {
+  detail?: string;
+  non_field_errors?: string[];
+  [fieldName: string]: string | string[] | undefined;
+}
+
 export interface ApiError {
   message: string;
   status: number;
-  details?: any;
+  details?: DRFErrorDetails;
 }
 
 class ApiService {
@@ -62,10 +100,10 @@ class ApiService {
   ): Promise<T> {
     const csrfToken = getCookie('csrftoken');
     
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      ...options.headers,
+      ...(options.headers as Record<string, string> | undefined),
     };
 
     if (csrfToken) {
@@ -81,7 +119,7 @@ class ApiService {
     const response = await fetch(`${this.baseURL}${endpoint}`, config);
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      const errorData: DRFErrorDetails = await response.json().catch(() => ({}));
       const error: ApiError = {
         message: errorData.detail || `HTTP error! status: ${response.status}`,
         status: response.status,
@@ -94,24 +132,24 @@ class ApiService {
   }
 
   // Physics Day participants
-  async createPhysicsDayParticipant(data: PhysicsDayParticipantData): Promise<any> {
-    return this.makeRequest('/physicsday/participants', {
+  async createPhysicsDayParticipant(data: PhysicsDayParticipantData): Promise<CreatedPhysicsDayParticipant> {
+    return this.makeRequest<CreatedPhysicsDayParticipant>('/physicsday/participants', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
   // Olympiad participants
-  async createOlympiadParticipant(data: OlympiadParticipantData): Promise<any> {
-    return this.makeRequest('/olympiads/participants', {
+  async createOlympiadParticipant(data: OlympiadParticipantData): Promise<CreatedOlympiadParticipant> {
+    return this.makeRequest<CreatedOlympiadParticipant>('/olympiads/participants', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
   // Workshop participants
-  async createWorkshopParticipant(data: WorkshopParticipantData): Promise<any> {
-    return this.makeRequest('/workshops/participants', {
+  async createWorkshopParticipant(data: WorkshopParticipantData): Promise<CreatedWorkshopParticipant> {
+    return this.makeRequest<CreatedWorkshopParticipant>('/workshops/participants', {
       method: 'POST',
       body: JSON.stringify(data),
     });
@@ -119,23 +157,31 @@ class ApiService {
 
   // Workshops
   async getWorkshops(): Promise<Workshop[]> {
-    return this.makeRequest('/workshops/');
+    return this.makeRequest<Workshop[]>('/workshops/');
   }
 }
 
 // Create singleton instance
 export const apiService = new ApiService(API_BASE_URL);
 
+// Type guard for ApiError
+function isApiError(error: unknown): error is ApiError {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    'status' in error
+  );
+}
+
 // Error handling utilities
 export const getErrorMessage = (error: unknown): string => {
-  if (error instanceof Error && 'status' in error) {
-    const apiError = error as ApiError;
-    
-    if (apiError.message.includes('Failed to fetch')) {
+  if (isApiError(error)) {
+    if (error.message.includes('Failed to fetch')) {
       return 'Не удается подключиться к серверу. Проверьте подключение к интернету.';
     }
     
-    switch (apiError.status) {
+    switch (error.status) {
       case 400:
         return 'Проверьте правильность заполнения всех полей.';
       case 406:
@@ -143,7 +189,7 @@ export const getErrorMessage = (error: unknown): string => {
       case 500:
         return 'Ошибка сервера. Попробуйте позже.';
       default:
-        return apiError.message;
+        return error.message;
     }
   }
   
@@ -152,4 +198,23 @@ export const getErrorMessage = (error: unknown): string => {
   }
   
   return 'Произошла неизвестная ошибка. Попробуйте позже.';
+};
+
+// Utility function to extract field errors from DRF response
+export const getFieldErrors = (error: unknown): Record<string, string[]> => {
+  if (isApiError(error) && error.details) {
+    const fieldErrors: Record<string, string[]> = {};
+    
+    Object.entries(error.details).forEach(([key, value]) => {
+      if (key !== 'detail' && Array.isArray(value)) {
+        fieldErrors[key] = value;
+      } else if (key !== 'detail' && typeof value === 'string') {
+        fieldErrors[key] = [value];
+      }
+    });
+    
+    return fieldErrors;
+  }
+  
+  return {};
 };
