@@ -6,159 +6,59 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useModal } from "@/hooks/useModal";
 import { Modal } from "@/components/ui/Modal";
-import { API_BASE_URL, PROGRAM_ITEMS, USER_ROLES } from "@/lib/constants";
+import { PROGRAM_ITEMS, USER_ROLES } from "@/lib/constants";
 import { FadeInSection } from "@/components/animations/FadeInSection";
 import { FlyingCats } from "@/components/animations/FlyingCats";
 import { UserRole } from "@/lib/types";
 import { SequentialFadeIn } from "@/components/animations/SequentialFadeIn";
-import { getCookie } from "@/lib/cookie";
+import { 
+  apiService, 
+  getErrorMessage, 
+  type PhysicsDayParticipantData 
+} from "@/services/api";
+
+import { 
+  useRegistrationForm, 
+  validatePhysicsDayForm,
+  type PhysicsDayFormData 
+} from "@/hooks/useRegistrationForm";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// API service for participant registration
-const participantService = {
-  async create(participantData: {
-    role: string;
-    name: string;
-    email: string;
-    phone: string;
-    city: string;
-    school: string | null;
-    class_number: number | null;
-  }) {
 
-    const csrfToken = getCookie('csrftoken');
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    };
-
-    if (csrfToken) {
-      headers['X-CSRFToken'] = csrfToken;
-    }
-
-    const response = await fetch(`${API_BASE_URL}/physicsday/participants`, {
-      method: 'POST',
-      headers: headers,
-      credentials: 'include',
-      body: JSON.stringify(participantData),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
-    }
-
-    return response.json();
-  }
+const initialFormData: PhysicsDayFormData = {
+  name: '',
+  email: '',
+  phone: '',
+  city: '',
+  school: '',
+  class: '',
+  agreement: false
 };
 
 export default function Home() {
   const [role, setRole] = useState<UserRole>("Школьник");
   const [isOpen, modalContent, showModal, closeModal] = useModal();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    city: '',
-    school: '',
-    class: '',
-    agreement: false
-  });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-    }));
-  };
-
-  const validateForm = () => {
-    const requiredFields = ['name', 'email', 'phone', 'city'];
-    const emptyFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
-    
-    // For students, school and class are also required
-    if (role === "Школьник") {
-      if (!formData.school || !formData.class) {
-        emptyFields.push(...['school', 'class'].filter(field => !formData[field as keyof typeof formData]));
-      }
-    }
-    
-    if (emptyFields.length > 0) {
-      showModal(
-        'error',
-        'Заполните все поля',
-        'Все обязательные поля должны быть заполнены.'
-      );
-      return false;
-    }
-
-    if (!formData.agreement) {
-      showModal(
-        'error',
-        'Требуется согласие',
-        'Необходимо дать согласие на обработку персональных данных для продолжения регистрации.'
-      );
-      return false;
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      showModal(
-        'error',
-        'Неверный формат email',
-        'Пожалуйста, введите корректный email адрес.'
-      );
-      return false;
-    }
-
-    // Validate class number for students
-    if (role === "Школьник" && formData.class) {
-      const classNum = parseInt(formData.class, 10);
-      if (isNaN(classNum) || classNum < 1 || classNum > 11) {
-        showModal(
-          'error',
-          'Неверный класс',
-          'Пожалуйста, введите номер класса от 1 до 11.'
-        );
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  const handleSubmit = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
+  const handleFormSubmit = async (data: PhysicsDayFormData) => {
     try {
       // Prepare data for API
-      const apiData = {
+      const apiData: PhysicsDayParticipantData = {
         role: role,
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        phone: formData.phone.trim(),
-        city: formData.city.trim(),
+        name: data.name.trim(),
+        email: data.email.trim(),
+        phone: data.phone.trim(),
+        city: data.city.trim(),
         ...(role === "Школьник" ? {
-          school: formData.school.trim(),
-          class_number: parseInt(formData.class, 10)
+          school: data.school.trim(),
+          class_number: parseInt(data.class, 10)
         } : {
           school: null,
           class_number: null
         })
       };
 
-      // Send data to Django backend
-      const result = await participantService.create(apiData);
+      await apiService.createPhysicsDayParticipant(apiData);
 
       showModal(
         'success',
@@ -183,42 +83,51 @@ export default function Home() {
         </>
       );
       
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        city: '',
-        school: '',
-        class: '',
-        agreement: false
-      });
+      // Reset role to default
       setRole("Школьник");
 
     } catch (error) {
       console.error('Registration error:', error);
       
-      let errorMessage = 'Произошла ошибка при регистрации. Попробуйте позже.';
-      
-      if (error instanceof Error) {
-        if (error.message.includes('Failed to fetch')) {
-          errorMessage = 'Не удается подключиться к серверу. Проверьте подключение к интернету.';
-        } else if (error.message.includes('400')) {
-          errorMessage = 'Проверьте правильность заполнения всех полей.';
-        } else if (error.message.includes('500')) {
-          errorMessage = 'Ошибка сервера. Попробуйте позже.';
-        } else {
-          errorMessage = error.message;
-        }
-      }
+      const errorMessage = getErrorMessage(error);
       
       showModal(
         'error',
         'Ошибка регистрации',
         errorMessage
       );
-    } finally {
-      setIsSubmitting(false);
+    }
+  };
+
+  const validateForm = (data: PhysicsDayFormData): string | null => {
+    return validatePhysicsDayForm(data, role);
+  };
+
+  const {
+    formData,
+    isSubmitting,
+    handleInputChange,
+    handleSubmit
+  } = useRegistrationForm({
+    initialData: initialFormData,
+    onSubmit: handleFormSubmit,
+    validate: validateForm
+  });
+
+  const onSubmitClick = async (e: React.MouseEvent) => {
+    try {
+      await handleSubmit(e);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Произошла ошибка валидации';
+      
+      // Determine modal title based on error type
+      let title = 'Ошибка валидации';
+      if (errorMessage.includes('согласие')) title = 'Требуется согласие';
+      if (errorMessage.includes('поля')) title = 'Заполните все поля';
+      if (errorMessage.includes('email')) title = 'Неверный формат email';
+      if (errorMessage.includes('класс')) title = 'Неверный класс';
+      
+      showModal('error', title, errorMessage);
     }
   };
 
@@ -232,7 +141,7 @@ export default function Home() {
         <FlyingCats />
         <div className="text-center px-4 max-w-4xl">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            29 сентября 2025<br />
+            28 сентября 2025<br />
             ФИЗФЕСТ
           </h1>
           <p className="text-xl sm:text-2xl md:text-3xl mb-4 font-medium">11:00 Главный корпус НГУ</p>
@@ -291,7 +200,7 @@ export default function Home() {
 
               {/* Олимпиада */}
               <a 
-                href="/olimpiads" 
+                href="/olympiads" 
                 className="group border-2 border-[#344EAD] hover:bg-[#344EAD] transition-all duration-300 rounded-2xl p-8 flex flex-col items-center justify-start min-h-[200px] hover:shadow-lg"
               >
                 <div className="text-center">
@@ -401,7 +310,7 @@ export default function Home() {
                   ? 'bg-[#344EAD] text-white hover:bg-[#2a3f92]'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
-              onClick={handleSubmit}
+              onClick={onSubmitClick}
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Отправка...' : 'Отправить'}

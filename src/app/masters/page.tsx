@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Inter } from "next/font/google";
 import { motion } from "framer-motion";
 import { CheckCircle, Clock, MapPin, Users } from "lucide-react";
@@ -12,7 +12,9 @@ import { useModal } from "@/hooks/useModal";
 import { FlyingCats } from "@/components/animations/FlyingCats";
 import { SequentialFadeIn } from "@/components/animations/SequentialFadeIn";
 import { API_BASE_URL } from "@/lib/constants";
-import { getCookie } from "@/lib/cookie";
+import { useWorkshops } from "@/hooks/useWorkshops";
+import { apiService, getErrorMessage, WorkshopParticipantData } from "@/services/api";
+import { useRegistrationForm, validateWorkshopForm, WorkshopFormData } from "@/hooks/useRegistrationForm";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -54,7 +56,13 @@ interface WorkshopCardProps {
   isSelected: boolean;
 }
 
-const WorkshopCard = ({ workshop, onSelect, isSelected }: WorkshopCardProps) => {
+interface WorkshopCardProps {
+  workshop: Workshop;
+  onSelect: (workshopId: number) => void;
+  isSelected: boolean;
+}
+
+export const WorkshopCard = ({ workshop, onSelect, isSelected }: WorkshopCardProps) => {
   const isAvailable = workshop.limit_left > 0;
   
   // Construct full image URL
@@ -112,52 +120,91 @@ const WorkshopCard = ({ workshop, onSelect, isSelected }: WorkshopCardProps) => 
   );
 };
 
+const initialFormData: WorkshopFormData = {
+  name: '',
+  email: '',
+  phone: '',
+  city: '',
+  school: '',
+  class_number: '',
+  agreement: false,
+  selectedWorkshop: null
+};
+
 export default function WorkshopsPage() {
-  const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const [selectedWorkshop, setSelectedWorkshop] = useState<number | null>(null);
   const [isOpen, modalContent, showModal, closeModal] = useModal();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  
+  // Use workshops hook
+  const { workshops, loading, error, refreshWorkshops } = useWorkshops();
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    city: '',
-    school: '',
-    class_number: '',
-    agreement: false
-  });
+  const handleFormSubmit = async (data: WorkshopFormData) => {
+    try {
+      // Prepare data for API
+      const apiData: WorkshopParticipantData = {
+        name: data.name.trim(),
+        email: data.email.trim(),
+        phone: data.phone.trim(),
+        city: data.city.trim(),
+        school: data.school.trim(),
+        class_number: parseInt(data.class_number, 10),
+        workshop: selectedWorkshop!
+      };
 
-  // Fetch workshops from API
-  useEffect(() => {
-    const fetchWorkshops = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/workshops/`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setWorkshops(data);
-      } catch (err) {
-        console.error('Error fetching workshops:', err);
-        setError('Не удалось загрузить список мастер-классов. Попробуйте обновить страницу.');
-      } finally {
-        setLoading(false);
+      await apiService.createWorkshopParticipant(apiData);
+      
+      showModal(
+        'success',
+        'Регистрация прошла успешно!',
+        'Благодарим за регистрацию на мастер-класс 🎉'
+      );
+      
+      // Refresh workshops data to get updated limit_left
+      await refreshWorkshops();
+      
+      // Reset selected workshop
+      setSelectedWorkshop(null);
+      
+    } catch (error) {
+      console.error('Registration error:', error);
+      
+      const errorMessage = getErrorMessage(error);
+      
+      // Special handling for workshop full error
+      if (error && typeof error === 'object' && 'status' in error && error.status === 406) {
+        showModal(
+          'error',
+          'Места закончились',
+          'К сожалению, места на этот мастер-класс закончились.'
+        );
+        // Refresh workshops to update limit_left
+        await refreshWorkshops();
+      } else {
+        showModal(
+          'error',
+          'Ошибка регистрации',
+          errorMessage
+        );
       }
-    };
-
-    fetchWorkshops();
-  }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-    }));
+    }
   };
+
+  const validateForm = (data: WorkshopFormData): string | null => {
+    // Add selectedWorkshop to form data for validation
+    const dataWithWorkshop = { ...data, selectedWorkshop };
+    return validateWorkshopForm(dataWithWorkshop);
+  };
+
+  const {
+    formData,
+    isSubmitting,
+    handleInputChange,
+    handleSubmit
+  } = useRegistrationForm({
+    initialData: initialFormData,
+    onSubmit: handleFormSubmit,
+    validate: validateForm
+  });
 
   const handleWorkshopSelect = (workshopId: number) => {
     setSelectedWorkshop(workshopId);
@@ -168,131 +215,23 @@ export default function WorkshopsPage() {
     }
   };
 
-  const handleSubmit = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    
-    if (!selectedWorkshop) {
-      showModal(
-        'error',
-        'Выберите мастер-класс',
-        'Необходимо выбрать мастер-класс для регистрации.'
-      );
-      return;
-    }
-
-    if (!formData.agreement) {
-      showModal(
-        'error',
-        'Требуется согласие',
-        'Необходимо дать согласие на обработку персональных данных для продолжения регистрации.'
-      );
-      return;
-    }
-
-    // Validate required fields
-    const requiredFields = ['name', 'email', 'phone', 'city', 'school', 'class_number'];
-    const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
-    
-    if (missingFields.length > 0) {
-      showModal(
-        'error',
-        'Заполните все поля',
-        'Пожалуйста, заполните все обязательные поля формы.'
-      );
-      return;
-    }
-
-    setIsSubmitting(true);
+  const onSubmitClick = async (e: React.MouseEvent) => {
     showModal('loading', 'Регистрация...', 'Пожалуйста, подождите...');
-
+    
     try {
-      const participantData: ParticipantData = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        city: formData.city,
-        school: formData.school,
-        class_number: parseInt(formData.class_number),
-        workshop: selectedWorkshop
-      };
-
-      const csrfToken = getCookie('csrftoken');
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      };
-
-      if (csrfToken) {
-        headers['X-CSRFToken'] = csrfToken;
-      }
-
-      const response = await fetch(`${API_BASE_URL}/workshops/participants`, {
-        method: 'POST',
-        headers: headers,
-        credentials: 'include',
-        body: JSON.stringify(participantData),
-      });
-
-      if (response.ok) {
-        showModal(
-          'success',
-          'Регистрация прошла успешно!',
-          'Благодарим за регистрацию на мастер-класс 🎉'
-        );
-        
-        // Refresh workshops data to get updated limit_left
-        const workshopsResponse = await fetch(`${API_BASE_URL}/workshops/`);
-        if (workshopsResponse.ok) {
-          const updatedWorkshops = await workshopsResponse.json();
-          setWorkshops(updatedWorkshops);
-        }
-        
-        // Сброс формы
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          city: '',
-          school: '',
-          class_number: '',
-          agreement: false
-        });
-        setSelectedWorkshop(null);
-        
-      } else if (response.status === 406) {
-        // Not Acceptable - workshop is full
-        showModal(
-          'error',
-          'Места закончились',
-          'К сожалению, места на этот мастер-класс закончились.'
-        );
-        
-        // Refresh workshops to update limit_left
-        const workshopsResponse = await fetch(`${API_BASE_URL}/workshops/`);
-        if (workshopsResponse.ok) {
-          const updatedWorkshops = await workshopsResponse.json();
-          setWorkshops(updatedWorkshops);
-        }
-        
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        showModal(
-          'error',
-          'Ошибка регистрации',
-          'Произошла ошибка при регистрации. Пожалуйста, проверьте данные и попробуйте снова.'
-        );
-        console.error('Registration error:', errorData);
-      }
-      
+      await handleSubmit(e);
     } catch (error) {
-      console.error('Error submitting form:', error);
-      showModal(
-        'error',
-        'Ошибка соединения',
-        'Не удалось отправить данные. Проверьте интернет-соединение и попробуйте снова.'
-      );
-    } finally {
-      setIsSubmitting(false);
+      const errorMessage = error instanceof Error ? error.message : 'Произошла ошибка валидации';
+      
+      // Determine modal title based on error type
+      let title = 'Ошибка валидации';
+      if (errorMessage.includes('согласие')) title = 'Требуется согласие';
+      if (errorMessage.includes('поля')) title = 'Заполните все поля';
+      if (errorMessage.includes('email')) title = 'Неверный формат email';
+      if (errorMessage.includes('класс')) title = 'Неверный класс';
+      if (errorMessage.includes('мастер-класс')) title = 'Выберите мастер-класс';
+      
+      showModal('error', title, errorMessage);
     }
   };
 
@@ -475,7 +414,7 @@ export default function WorkshopsPage() {
                   ? 'bg-[#344EAD] text-white hover:bg-[#2a3f92]'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
-              onClick={handleSubmit}
+              onClick={onSubmitClick}
               disabled={!selectedWorkshop || isSubmitting}
             >
               {isSubmitting ? 'Регистрация...' : 'Зарегистрироваться'}
