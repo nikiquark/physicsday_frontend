@@ -62,7 +62,7 @@ interface WorkshopCardProps {
   isSelected: boolean;
 }
 
-export const WorkshopCard = ({ workshop, onSelect, isSelected }: WorkshopCardProps) => {
+const WorkshopCard = ({ workshop, onSelect, isSelected }: WorkshopCardProps) => {
   const isAvailable = workshop.limit_left > 0;
   
   // Construct full image URL
