@@ -86,23 +86,18 @@ export const USER_ROLES= [
 
 export const PARTNERS: PartnerItem[] = [
   {
-    name: "SoftLab NSK",
-    logo: "/logos/softlab.png",
-    website: "https://www.softlab.tv/"
-  },
-  {
-    name: "Институт Ядерной Физики СО РАН",
+    name: "ИЯФ СО РАН",
     logo: "/logos/binp.jpg",
     website: "https://www.inp.nsk.su/"
   },
   {
-    name: "Институт теоретической и прикладной механики СО РАН",
+    name: "ИТПМ СО РАН",
     logo: "/logos/itpm.jpg",
     website: "https://itam.nsc.ru/"
   },
   {
-    name: "Новосибирский государственный университет",
-    logo: "/logos/nsu.png",
-    website: "https://www.nsu.ru/n/"
+    name: "SoftLab NSK",
+    logo: "/logos/softlab.png",
+    website: "https://www.softlab.tv/"
   },
 ];

@@ -90,7 +90,7 @@ const WorkshopCard = ({ workshop, onSelect, isSelected }: WorkshopCardProps) => 
       <div className="relative z-10 p-6 h-full flex flex-col justify-between text-white">
         <div>
           <h3 className="text-xl font-bold mb-2 leading-tight">{workshop.name}</h3>
-          <p className="text-sm text-gray-200 mb-2">{workshop.restriction}</p>
+          <p className="text-md text-gray-200 mb-2" style={{ whiteSpace: 'pre-line' }}>{workshop.restriction.replace('<br/>', '\n')}</p>
           <div className="flex items-center text-md">
             <Clock className="w-4 h-4 mr-2" />
             {workshop.time}
@@ -323,7 +323,7 @@ export default function WorkshopsPage() {
       <section id="registration" className="py-8 bg-white px-4">
         <FadeInSection>
           <h2 className="text-center text-3xl font-bold mb-4">Регистрация на мастер-класс</h2>
-          <p className="text-center text-gray-600 mb-12 font-bold text-xl">(только для школьников)</p>
+          <p className="text-center text-gray-600 mb-12 font-bold text-xl">(для школьников и дошколников)</p>
           
           {selectedWorkshopData && (
             <div className="max-w-xl mx-auto mb-8 p-6 bg-[#344EAD] text-white rounded-xl">

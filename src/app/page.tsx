@@ -342,15 +342,15 @@ export default function Home() {
       </section>
 
       {/* Location Section */}
-      <section id="location" className="py-12 bg-gray-50">
+      <section id="location" className="py-8 bg-gray-50">
         <FadeInSection>
-          <h2 className="text-center text-3xl font-bold mb-12">Где будет фестиваль?</h2>
+          <h2 className="text-center text-3xl font-bold mb-12">Место проведения</h2>
           <div className="max-w-6xl mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center">
               {/* Map */}
               <div className="h-96 rounded-xl overflow-hidden shadow-lg">
                 <iframe
-                  src="https://yandex.ru/map-widget/v1/?ll=83.093101%2C54.843242&z=16&pt=83.093101,54.843242,pm2rdm"
+                  src="https://yandex.ru/map-widget/v1/?ll=83.093101%2C54.843242&z=18&pt=83.093101,54.843242,pm2rdm"
                   width="100%"
                   height="100%"
                   frameBorder="0"
@@ -388,27 +388,27 @@ export default function Home() {
       </section>
 
       {/* Partners Section */}
-      <section id="partners" className="py-12 bg-white">
+      <section id="partners" className="py-8 bg-white">
         <FadeInSection>
-          <h2 className="text-center text-3xl font-bold mb-12">Партнёры фестиваля</h2>
+          <h2 className="text-center text-3xl font-bold mb-1">Партнёры фестиваля</h2>
           <div className="max-w-6xl mx-auto px-4">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
               {PARTNERS.map((partner, idx) => (
                 <SequentialFadeIn key={idx} index={idx}>
                   <a
                     href={partner.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group block p-4 rounded-xl  transition-all duration-300 hover:shadow-lg"
+                    className="group block p-3 rounded-xl transition-all duration-300 hover:shadow-lg"
                   >
-                    <div className="aspect-square flex items-center justify-center mb-3">
+                    <div className="aspect-square flex items-center justify-center mb-2">
                       <img
                         src={partner.logo}
                         alt={partner.name}
                         className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
                       />
                     </div>
-                    <p className="text-sm text-gray-700 text-center font-medium group-hover:text-[#344EAD] transition-colors">
+                    <p className="text-xs text-gray-700 text-center font-medium group-hover:text-[#344EAD] transition-colors">
                       {partner.name}
                     </p>
                   </a>
