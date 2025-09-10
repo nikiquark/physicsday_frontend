@@ -136,7 +136,7 @@ export default function OlympiadPage() {
         <div className="text-center px-4 max-w-5xl">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight">
             ФизФест<br />
-            Олимпиады по физике
+            олимпиады по физике
           </h1>
           
           {/* Классы */}
@@ -166,7 +166,7 @@ export default function OlympiadPage() {
                 <Clock className="w-6 h-6 text-red-300" />
                 <div>
                   <div className="font-semibold">Регистрация</div>
-                  <div className="text-gray-200">до 10:00 2 октября</div>
+                  <div className="text-gray-200">до 10:00 3 октября</div>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
@@ -196,7 +196,7 @@ export default function OlympiadPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-8  bg-gray-50">
         <FadeInSection>
           <div className="max-w-6xl mx-auto px-4">
             <h2 className="text-center text-3xl md:text-4xl font-bold mb-12">
@@ -215,7 +215,7 @@ export default function OlympiadPage() {
       </section>
 
       {/* Registration Section */}
-      <section id="register" className="py-20 bg-white px-4">
+      <section id="register" className="py-8 bg-white px-4">
         <FadeInSection>
           <h2 className="text-center text-3xl font-bold mb-1">Регистрация на олимпиаду</h2>
           <p className="text-center text-gray-600 mb-12 font-bold text-xl">(только для школьников)</p>

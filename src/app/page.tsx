@@ -142,9 +142,11 @@ export default function Home() {
         <div className="text-center px-4 max-w-4xl">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
             28 сентября 2025<br />
-            ФИЗФЕСТ
+            ФизФест<br />
+            11:00
           </h1>
-          <p className="text-xl sm:text-2xl md:text-3xl mb-4 font-medium">11:00 Главный корпус НГУ</p>
+          {/* <p className="text-xl sm:text-2xl md:text-3xl mb-4 font-medium">11:00</p> */}
+          <p className="text-xl sm:text-2xl md:text-4xl mb-4 font-medium">Главный корпус НГУ (Пирогова, 2)</p>
           <p className="text-base sm:text-lg md:text-xl text-gray-200 mb-8 leading-relaxed">
             Фестиваль науки &quot;ФизФест&quot; — масштабное событие, организуемое студентами и&nbsp;молодыми учеными Новосибирского государственного университета с&nbsp;целью популяризации физики среди школьников и&nbsp;общественности. Участники смогут не&nbsp;только увлекательно провести время, но&nbsp;и&nbsp;пополнить свои знания в&nbsp;области естествознания, приобщиться к&nbsp;фундаментальной науке, познакомиться с&nbsp;учеными&#8209;практиками.
           </p>
@@ -155,7 +157,7 @@ export default function Home() {
       </section>
 
       {/* Program Section */}
-      <section id="program" className="py-20 bg-gray-50">
+      <section id="program" className="py-12 bg-gray-50">
         <FadeInSection>
           <h2 className="text-center text-3xl font-bold mb-12">Программа</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 max-w-6xl mx-auto">
@@ -178,9 +180,9 @@ export default function Home() {
       </section>
 
       {/* Additional Registration Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="pt-0 pb-12 bg-gray-50">
         <FadeInSection>
-          <h2 className="text-center text-3xl font-bold mb-12">Дополнительные события</h2>
+          {/* <h2 className="text-center text-3xl font-bold mb-12">Дополнительные события</h2> */}
           <div className="max-w-4xl mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Мастер-классы */}
@@ -218,7 +220,7 @@ export default function Home() {
       </section>
 
       {/* Registration Section */}
-      <section id="register" className="py-20 bg-white px-4">
+      <section id="register" className="pt-4 pb-12 bg-white px-4">
         <FadeInSection>
           <h2 className="text-center text-3xl font-bold mb-12">Регистрация на ФизФест</h2>
           <div className="max-w-xl mx-auto grid gap-6">

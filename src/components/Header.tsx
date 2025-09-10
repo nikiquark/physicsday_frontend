@@ -24,7 +24,7 @@ export default function Header() {
                 <Link href="/masters" className="hover:text-blue-600 transition">Мастер-классы</Link>
                 <Link href="/olympiads" className="hover:text-blue-600 transition">Олимпиада</Link>
                 <a href="#contacts" className="hover:text-blue-600 transition">Контакты</a>
-                <Link href="/#register" className="bg-[#344EAD] text-white px-4 py-2 rounded-xl font-semibold hover:bg-[#2a3f92] transition">Регистрация</Link>
+                <Link href="/#register" className="bg-[#344EAD] text-white px-4 py-2 rounded-xl font-semibold hover:bg-[#2a3f92] transition">Регистрация на ФизФест</Link>
             </nav>
             </div>
             {menuOpen && (
