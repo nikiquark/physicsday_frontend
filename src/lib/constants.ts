@@ -1,5 +1,5 @@
 import { BookOpen, Gift, Lightbulb, Star, Target, Trophy } from "lucide-react";
-import { ProgramItem } from "./types";
+import { PartnerItem, ProgramItem } from "./types";
 
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL as string;
 
@@ -18,23 +18,25 @@ export const PROGRAM_ITEMS: ProgramItem[] = [
     },
     {
       title:"ФизКвест",
-      image: "/quest.jpg"
+      image: "/program/quest.jpg"
     },
     {
       title:"Physics Street",
-      image: "/street.jpg"
+      image: "/program/street.jpg"
     },
     {
       title:"Мастер-классы",
-      image: "/masters.jpg"
+      image: "/program/workshops.jpg",
+      href: "/masters"
     },
     {
       title:"ФизФест-олимпиады",
-      image: "/olympiads.jpg"
+      image: "/olympiads.jpg",
+      href: "/olympiads"
     },
     {
       title:"Призы и\u00A0подарки от\u00A0организаторов",
-      image: "/presents.png"
+      image: "/program/prizes.jpg"
     },
     {
       title:"",
@@ -81,3 +83,26 @@ export const USER_ROLES= [
     "Дошкольник",
     "Студент/аспирант и др."
 ] as const;
+
+export const PARTNERS: PartnerItem[] = [
+  {
+    name: "SoftLab NSK",
+    logo: "/logos/softlab.png",
+    website: "https://www.softlab.tv/"
+  },
+  {
+    name: "Институт Ядерной Физики СО РАН",
+    logo: "/logos/binp.jpg",
+    website: "https://www.inp.nsk.su/"
+  },
+  {
+    name: "Институт теоретической и прикладной механики СО РАН",
+    logo: "/logos/itpm.jpg",
+    website: "https://itam.nsc.ru/"
+  },
+  {
+    name: "Новосибирский государственный университет",
+    logo: "/logos/nsu.png",
+    website: "https://www.nsu.ru/n/"
+  },
+];

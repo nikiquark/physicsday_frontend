@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Inter } from "next/font/google";
 import { motion } from "framer-motion";
-import { CheckCircle, Clock, MapPin, Users } from "lucide-react";
+import { Calendar, CheckCircle, Clock, GraduationCap, MapPin, Users } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { FadeInSection } from "@/components/animations/FadeInSection";
@@ -90,14 +90,15 @@ const WorkshopCard = ({ workshop, onSelect, isSelected }: WorkshopCardProps) => 
       <div className="relative z-10 p-6 h-full flex flex-col justify-between text-white">
         <div>
           <h3 className="text-xl font-bold mb-2 leading-tight">{workshop.name}</h3>
-          <p className="text-sm text-gray-200 mb-4">{workshop.restriction}</p>
-        </div>
-        
-        <div className="space-y-2">
-          <div className="flex items-center text-sm">
+          <p className="text-sm text-gray-200 mb-2">{workshop.restriction}</p>
+          <div className="flex items-center text-md">
             <Clock className="w-4 h-4 mr-2" />
             {workshop.time}
           </div>
+        </div>
+        
+        <div className="space-y-2">
+          
           <div className="flex items-center text-sm">
             <MapPin className="w-4 h-4 mr-2" />
             {workshop.room}
@@ -291,11 +292,11 @@ export default function WorkshopsPage() {
       </section>
 
       {/* Workshops Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-8 bg-gray-50">
         <FadeInSection>
-          <h2 className="text-center text-3xl font-bold mb-4">Доступные мастер-классы</h2>
-          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto px-4">
-            Выберите интересующий вас мастер-класс, кликнув по карточке. После выбора вы сможете зарегистрироваться в форме ниже.
+          <h2 className="text-center text-3xl font-bold mb-4">Доступные мастер&#x2011;классы</h2>
+          <p className="text-center text-gray-600 font-bold mb-12 max-w-4xl mx-auto px-4">
+            Выберите интересующий вас мастер&#x2011;класс, кликнув по карточке, и пройдите регистрацию.
           </p>
           
           {workshops.length === 0 ? (
@@ -319,7 +320,7 @@ export default function WorkshopsPage() {
       </section>
 
       {/* Registration Section */}
-      <section id="registration" className="py-20 bg-white px-4">
+      <section id="registration" className="py-8 bg-white px-4">
         <FadeInSection>
           <h2 className="text-center text-3xl font-bold mb-4">Регистрация на мастер-класс</h2>
           <p className="text-center text-gray-600 mb-12 font-bold text-xl">(только для школьников)</p>
@@ -329,10 +330,18 @@ export default function WorkshopsPage() {
               <h3 className="text-xl font-semibold mb-2">Выбранный мастер-класс:</h3>
               <p className="text-lg font-medium">{selectedWorkshopData.name}</p>
               <div className="mt-3 space-y-1 text-sm">
-                <p>📅 {selectedWorkshopData.time}</p>
-                <p>📍 {selectedWorkshopData.room}</p>
-                <p>🎓 {selectedWorkshopData.restriction}</p>
-                <p>👥 {getLimitText(selectedWorkshopData.limit_left)}</p>
+                <p className="flex items-center gap-2">
+                  <Calendar size={16} /> {selectedWorkshopData.time}
+                </p>
+                <p className="flex items-center gap-2">
+                  <MapPin size={16} /> {selectedWorkshopData.room}
+                </p>
+                <p className="flex items-center gap-2">
+                  <GraduationCap size={16} /> {selectedWorkshopData.restriction}
+                </p>
+                <p className="flex items-center gap-2">
+                  <Users size={16} /> {getLimitText(selectedWorkshopData.limit_left)}
+                </p>
               </div>
             </div>
           )}

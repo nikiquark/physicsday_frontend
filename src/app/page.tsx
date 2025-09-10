@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useModal } from "@/hooks/useModal";
 import { Modal } from "@/components/ui/Modal";
-import { PROGRAM_ITEMS, USER_ROLES } from "@/lib/constants";
+import { PROGRAM_ITEMS, USER_ROLES, PARTNERS } from "@/lib/constants";
 import { FadeInSection } from "@/components/animations/FadeInSection";
 import { FlyingCats } from "@/components/animations/FlyingCats";
 import { UserRole } from "@/lib/types";
@@ -146,7 +146,7 @@ export default function Home() {
             11:00
           </h1>
           {/* <p className="text-xl sm:text-2xl md:text-3xl mb-4 font-medium">11:00</p> */}
-          <p className="text-xl sm:text-2xl md:text-4xl mb-4 font-medium">Главный корпус НГУ (Пирогова, 2)</p>
+          <p className="text-xl sm:text-2xl md:text-4xl mb-4 font-medium">Главный корпус НГУ (Пирогова,&nbsp;2)</p>
           <p className="text-base sm:text-lg md:text-xl text-gray-200 mb-8 leading-relaxed">
             Фестиваль науки &quot;ФизФест&quot; — масштабное событие, организуемое студентами и&nbsp;молодыми учеными Новосибирского государственного университета с&nbsp;целью популяризации физики среди школьников и&nbsp;общественности. Участники смогут не&nbsp;только увлекательно провести время, но&nbsp;и&nbsp;пополнить свои знания в&nbsp;области естествознания, приобщиться к&nbsp;фундаментальной науке, познакомиться с&nbsp;учеными&#8209;практиками.
           </p>
@@ -161,18 +161,35 @@ export default function Home() {
         <FadeInSection>
           <h2 className="text-center text-3xl font-bold mb-12">Программа</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 max-w-6xl mx-auto">
-            {PROGRAM_ITEMS.map(({title, image}, idx) => (
+            {PROGRAM_ITEMS.map(({title, image, href}, idx) => (
               <SequentialFadeIn key={idx} index={idx}>
-                <div key={idx} className="relative h-64 rounded-xl overflow-hidden shadow-lg group">
-                  <img
-                    src={image}
-                    alt={title}
-                    className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${title ? 'brightness-50' : ''}`}
-                  />
-                  <div className="relative z-10 p-4 text-white text-lg font-semibold">
-                    {title}
-                  </div>
-                </div>
+                  {href ? (
+                    <a href={href} target="_blank" rel="noopener noreferrer">
+                      <div key={idx} className="relative h-64 rounded-xl overflow-hidden shadow-lg group">
+                        <img
+                          src={image}
+                          alt={title}
+                          className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${title ? 'brightness-50' : ''}`}
+                        />
+                        <div className="relative z-10 p-4 text-white text-lg font-semibold">
+                          {title}
+                        </div>
+                      </div>
+                    </a>
+                  ):(
+                    <div key={idx} className="relative h-64 rounded-xl overflow-hidden shadow-lg group">
+                      <img
+                        src={image}
+                        alt={title}
+                        className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${title ? 'brightness-50' : ''}`}
+                      />
+                      <div className="relative z-10 p-4 text-white text-lg font-semibold">
+                        {title}
+                      </div>
+                    </div>
+                  )}
+                  
+                
               </SequentialFadeIn>
             ))}
           </div>
@@ -320,6 +337,84 @@ export default function Home() {
             <p className="text-sm text-gray-600 text-center">
               Нажимая кнопку «Отправить», вы подтверждаете согласие на обработку персональных данных и на получение рассылки от НГУ.
             </p>
+          </div>
+        </FadeInSection>
+      </section>
+
+      {/* Location Section */}
+      <section id="location" className="py-12 bg-gray-50">
+        <FadeInSection>
+          <h2 className="text-center text-3xl font-bold mb-12">Где будет фестиваль?</h2>
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center">
+              {/* Map */}
+              <div className="h-96 rounded-xl overflow-hidden shadow-lg">
+                <iframe
+                  src="https://yandex.ru/map-widget/v1/?ll=83.093101%2C54.843242&z=16&pt=83.093101,54.843242,pm2rdm"
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  style={{
+                    position: 'relative',
+                  }}
+                  title="НГУ на карте"
+                ></iframe>
+              </div>
+
+              {/* Address Info */}
+              <div className="text-center lg:text-left">
+                <h3 className="text-2xl font-bold text-[#344EAD] mb-4">
+                  Главный корпус НГУ
+                </h3>
+                <p className="text-xl text-gray-700 mb-4">
+                  ул. Пирогова, 2<br/>
+                  Новосибирск
+                </p>
+                
+                <div className="mt-6">
+                  <a 
+                    href="https://yandex.ru/maps/?pt=83.093101,54.843242&z=16&l=map"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block bg-[#344EAD] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#2a3f92] transition-colors"
+                  >
+                    Открыть в Яндекс.Картах
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </FadeInSection>
+      </section>
+
+      {/* Partners Section */}
+      <section id="partners" className="py-12 bg-white">
+        <FadeInSection>
+          <h2 className="text-center text-3xl font-bold mb-12">Партнёры фестиваля</h2>
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+              {PARTNERS.map((partner, idx) => (
+                <SequentialFadeIn key={idx} index={idx}>
+                  <a
+                    href={partner.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block p-4 rounded-xl  transition-all duration-300 hover:shadow-lg"
+                  >
+                    <div className="aspect-square flex items-center justify-center mb-3">
+                      <img
+                        src={partner.logo}
+                        alt={partner.name}
+                        className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                    <p className="text-sm text-gray-700 text-center font-medium group-hover:text-[#344EAD] transition-colors">
+                      {partner.name}
+                    </p>
+                  </a>
+                </SequentialFadeIn>
+              ))}
+            </div>
           </div>
         </FadeInSection>
       </section>
