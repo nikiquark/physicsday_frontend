@@ -53,6 +53,7 @@ export function useRegistrationForm<T extends FormDataType>({
   };
 
   const validateClass = (classStr: string): boolean => {
+    if (classStr === 'preschool') return true;
     const classNum = parseInt(classStr, 10);
     return !isNaN(classNum) && classNum >= 1 && classNum <= 11;
   };
@@ -124,9 +125,11 @@ export const validatePhysicsDayForm = (data: PhysicsDayFormData, role: UserRole)
       return 'Для школьников поля "Школа" и "Класс" обязательны для заполнения.';
     }
     
-    const classNum = parseInt(data.class, 10);
-    if (isNaN(classNum) || classNum < 1 || classNum > 11) {
-      return 'Пожалуйста, введите номер класса от 1 до 11.';
+    if (data.class !== 'preschool') {
+      const classNum = parseInt(data.class, 10);
+      if (isNaN(classNum) || classNum < 1 || classNum > 11) {
+        return 'Пожалуйста, выберите класс от 1 до 11 или Дошкольник.';
+      }
     }
   }
   
@@ -134,16 +137,18 @@ export const validatePhysicsDayForm = (data: PhysicsDayFormData, role: UserRole)
 };
 
 export const validateStudentForm = (data: StudentFormData): string | null => {
-  const requiredFields = ['school', 'class_number'];
+  const requiredFields = ['class_number'];
   const emptyFields = requiredFields.filter(field => !data[field as keyof StudentFormData]);
   
   if (emptyFields.length > 0) {
-    return 'Все поля формы обязательны для заполнения.';
+    return 'Необходимо выбрать класс.';
   }
   
-  const classNum = parseInt(data.class_number, 10);
-  if (isNaN(classNum) || classNum < 1 || classNum > 11) {
-    return 'Пожалуйста, введите номер класса от 1 до 11.';
+  if (data.class_number !== 'preschool') {
+    const classNum = parseInt(data.class_number, 10);
+    if (isNaN(classNum) || classNum < 1 || classNum > 11) {
+      return 'Пожалуйста, выберите класс от 1 до 11 или Дошкольник.';
+    }
   }
   
   return null;

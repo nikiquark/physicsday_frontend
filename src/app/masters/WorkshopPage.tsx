@@ -148,7 +148,7 @@ export default function WorkshopsPage() {
         phone: data.phone.trim(),
         city: data.city.trim(),
         school: data.school.trim(),
-        class_number: parseInt(data.class_number, 10),
+        class_number: data.class_number === 'preschool' ? 0 : parseInt(data.class_number, 10),
         workshop: selectedWorkshop!
       };
 
@@ -387,10 +387,9 @@ export default function WorkshopsPage() {
               name="school"
               className="border border-gray-300 p-3 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#344EAD] focus:border-transparent" 
               type="text" 
-              placeholder="Школа" 
+              placeholder="Школа (если есть)" 
               value={formData.school}
               onChange={handleInputChange}
-              required 
             />
             <select
               name="class_number"
@@ -400,6 +399,7 @@ export default function WorkshopsPage() {
               required
             >
               <option value="" disabled>Выберите класс</option>
+              <option value="preschool">Дошкольник</option>
               {Array.from({ length: 11 }, (_, i) => i + 1).map(num => (
                 <option key={num} value={num.toString()}>{num}</option>
               ))}
