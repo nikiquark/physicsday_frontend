@@ -323,7 +323,7 @@ export default function WorkshopsPage() {
       <section id="registration" className="py-8 bg-white px-4">
         <FadeInSection>
           <h2 className="text-center text-3xl font-bold mb-4">Регистрация на мастер-класс</h2>
-          <p className="text-center text-gray-600 mb-12 font-bold text-xl">(для школьников и дошколников)</p>
+          <p className="text-center text-gray-600 mb-12 font-bold text-xl">(для школьников и дошкольников)</p>
           
           {selectedWorkshopData && (
             <div className="max-w-xl mx-auto mb-8 p-6 bg-[#344EAD] text-white rounded-xl">
