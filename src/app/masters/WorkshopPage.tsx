@@ -286,7 +286,7 @@ export default function WorkshopsPage() {
             Мастер-классы
           </h1>
           <p className="text-lg sm:text-xl text-gray-200 leading-relaxed">
-            Практические занятия с экспертами в области физики для школьников всех возрастов
+            Практические занятия с экспертами в области физики для школьников и дошкольников
           </p>
         </div>
       </section>
