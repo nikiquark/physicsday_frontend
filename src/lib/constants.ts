@@ -96,6 +96,21 @@ export const PARTNERS: PartnerItem[] = [
     website: "https://itam.nsc.ru/"
   },
   {
+    name: "ИТ СО РАН",
+    logo: "/logos/it.png",
+    website: "https://itam.nsc.ru/"
+  },
+  {
+    name: "ИАиЭ СО РАН",
+    logo: "/logos/iae.png",
+    website: "https://www.iae.nsk.su/ru/"
+  },
+  {
+    name: "ИФП СО РАН",
+    logo: "/logos/ifp.png",
+    website: "https://www.isp.nsc.ru/"
+  },
+  {
     name: "SoftLab NSK",
     logo: "/logos/softlab.png",
     website: "https://www.softlab.tv/"
