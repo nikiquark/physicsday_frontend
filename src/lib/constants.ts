@@ -98,7 +98,7 @@ export const PARTNERS: PartnerItem[] = [
   {
     name: "ИТ СО РАН",
     logo: "/logos/it.png",
-    website: "https://itam.nsc.ru/"
+    website: "http://www.itp.nsc.ru/"
   },
   {
     name: "ИАиЭ СО РАН",
@@ -109,6 +109,31 @@ export const PARTNERS: PartnerItem[] = [
     name: "ИФП СО РАН",
     logo: "/logos/ifp.png",
     website: "https://www.isp.nsc.ru/"
+  },
+  {
+    name: "ИК СО РАН",
+    logo: "/logos/ik.png",
+    website: "https://catalysis.ru/"
+  },
+  {
+    name: "ИНХ СО РАН",
+    logo: "/logos/inc.png",
+    website: "http://niic.nsc.ru/"
+  },
+  {
+    name: "ИХКГ СО РАН",
+    logo: "/logos/ihkg.png",
+    website: "http://www.kinetics.nsc.ru/index.php/ru/"
+  },
+  {
+    name: "МТЦ СО РАН",
+    logo: "/logos/mtc.png",
+    website: "https://www.tomo.nsc.ru/"
+  },
+  {
+    name: "СКИФ",
+    logo: "/logos/skif.jpg",
+    website: "https://srf-skif.ru/index.php/"
   },
   {
     name: "SoftLab NSK",
