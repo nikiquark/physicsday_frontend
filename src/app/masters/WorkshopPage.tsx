@@ -296,7 +296,7 @@ export default function WorkshopsPage() {
         <FadeInSection>
           <h2 className="text-center text-3xl font-bold mb-4">Доступные мастер&#x2011;классы</h2>
           <p className="text-center text-gray-600 font-bold mb-12 max-w-4xl mx-auto px-4">
-            Выберите интересующий вас мастер&#x2011;класс, кликнув по карточке, и пройдите регистрацию.
+            Выберите <span className="underline font-extrabold">один</span> интересующий вас мастер&#x2011;класс, кликнув по карточке, и пройдите регистрацию.
           </p>
           
           {workshops.length === 0 ? (
@@ -337,7 +337,7 @@ export default function WorkshopsPage() {
                   <MapPin size={16} /> {selectedWorkshopData.room}
                 </p>
                 <p className="flex items-center gap-2">
-                  <GraduationCap size={16} /> {selectedWorkshopData.restriction}
+                  <GraduationCap size={16} /> {selectedWorkshopData.restriction.replace('<br/>', ' ')}
                 </p>
                 <p className="flex items-center gap-2">
                   <Users size={16} /> {getLimitText(selectedWorkshopData.limit_left)}

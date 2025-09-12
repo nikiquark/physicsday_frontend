@@ -181,8 +181,22 @@ export const getErrorMessage = (error: unknown): string => {
       return 'Не удается подключиться к серверу. Проверьте подключение к интернету.';
     }
     
+    // Проверяем на ошибку дублирования участника
+    if (error.details?.non_field_errors) {
+      const duplicateError = error.details.non_field_errors.find(err => 
+        err.includes('Вы уже зарегистрировались на')
+      );
+      if (duplicateError) {
+        return duplicateError;
+      }
+    }
+    
     switch (error.status) {
       case 400:
+        // Проверяем наличие специфических ошибок в деталях
+        if (error.details?.non_field_errors?.length) {
+          return error.details.non_field_errors[0];
+        }
         return 'Проверьте правильность заполнения всех полей.';
       case 406:
         return 'К сожалению, места на этот мастер-класс закончились.';
