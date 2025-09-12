@@ -2,7 +2,7 @@
 
 import { Inter } from "next/font/google";
 import { motion } from "framer-motion";
-import { Calendar, Clock, Trophy, LucideIcon } from "lucide-react";
+import { Calendar, Clock, Trophy, Monitor, LucideIcon } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { FadeInSection } from "@/components/animations/FadeInSection";
@@ -176,7 +176,14 @@ export default function OlympiadPage() {
                   <div className="text-gray-200">4 — 6 октября 2025</div>
                 </div>
               </div>
-              <div className="flex items-center space-x-3 md:col-span-2">
+              <div className="flex items-center space-x-3">
+                <Monitor className="w-6 h-6 text-blue-300" />
+                <div>
+                  <div className="font-semibold">Формат</div>
+                  <div className="text-gray-200">дистанционный</div>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
                 <Trophy className="w-6 h-6 text-green-300" />
                 <div>
                   <div className="font-semibold">Подведение итогов</div>
