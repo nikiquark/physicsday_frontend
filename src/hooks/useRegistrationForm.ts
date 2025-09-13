@@ -23,7 +23,11 @@ export interface WorkshopFormData extends StudentFormData {
   selectedWorkshop: number | null;
 }
 
-export interface ExcursionFormData extends BaseFormData {
+export interface ExcursionFormData {
+  name: string;
+  email: string;
+  phone: string;
+  agreement: boolean;
   passport: string;
   underages_count: number;
   underages: string;
