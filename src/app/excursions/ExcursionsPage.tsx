@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Inter } from "next/font/google";
 import { motion } from "framer-motion";
-import { Calendar, CheckCircle, Clock, MapPin, Users, UserCheck } from "lucide-react";
+import { Calendar, CheckCircle, Clock, MapPin, Users, Info } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { FadeInSection } from "@/components/animations/FadeInSection";
@@ -315,7 +315,7 @@ export default function ExcursionPage() {
       <section id="registration" className="py-8 bg-white px-4">
         <FadeInSection>
           <h2 className="text-center text-3xl font-bold mb-4">Регистрация на экскурсию</h2>
-          <p className="text-center text-gray-600 mb-12 font-bold text-xl">(только для совершеннолетних)</p>
+          <p className="text-center text-gray-600 mb-12 font-bold text-xl flex items-center justify-center"><Info className="mr-1" size={24} />  регистрацию детей осуществляют сопровождающие их лица</p>
           
           {selectedInstituteData && (
             <div className="max-w-xl mx-auto mb-8 p-6 bg-[#344EAD] text-white rounded-xl">
