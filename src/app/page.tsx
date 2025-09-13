@@ -164,7 +164,7 @@ export default function Home() {
             {PROGRAM_ITEMS.map(({title, image, href}, idx) => (
               <SequentialFadeIn key={idx} index={idx}>
                   {href ? (
-                    <a href={href} target="_blank" rel="noopener noreferrer">
+                    <a href={href} rel="noopener noreferrer">
                       <div key={idx} className="relative h-64 rounded-xl overflow-hidden shadow-lg group">
                         <img
                           src={image}
@@ -200,8 +200,8 @@ export default function Home() {
       <section className="pt-0 pb-12 bg-gray-50">
         <FadeInSection>
           {/* <h2 className="text-center text-3xl font-bold mb-12">Дополнительные события</h2> */}
-          <div className="max-w-4xl mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Мастер-классы */}
               <a 
                 href="/masters" 
@@ -228,6 +228,21 @@ export default function Home() {
                   </h3>
                   <p className="text-gray-600 group-hover:text-gray-200">
                     Участие в&nbsp;мини&#8209;олимпиадах по&nbsp;физике
+                  </p>
+                </div>
+              </a>
+
+              {/* Экскурсии */}
+              <a 
+                href="/excursions" 
+                className="group border-2 border-[#344EAD] hover:bg-[#344EAD] transition-all duration-300 rounded-2xl p-8 flex flex-col items-center justify-start min-h-[200px] hover:shadow-lg md:col-span-2 lg:col-span-1"
+              >
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-[#344EAD] group-hover:text-white mb-4">
+                    Регистрация <br/> на экскурсии
+                  </h3>
+                  <p className="text-gray-600 group-hover:text-gray-200">
+                    Посещение ведущих научных институтов и&nbsp;лабораторий
                   </p>
                 </div>
               </a>

@@ -6,7 +6,8 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL as string;
 export const PROGRAM_ITEMS: ProgramItem[] = [
     {
       title: "Экскурсии в\u00A0научные институты Академгородка",
-      image: "/program/institutes.jpg"
+      image: "/program/institutes.jpg",
+      href: "/excursions"
     },
     {
       title:"Уникальные физические демонстрации",
