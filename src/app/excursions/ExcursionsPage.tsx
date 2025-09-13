@@ -263,11 +263,11 @@ export default function ExcursionPage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative h-96 bg-[#344EAD] text-white flex items-center justify-center pt-20">
+      <section className="relative h-96 md:h-[calc(100vh-120px)] bg-[#344EAD] text-white flex items-center justify-center pt-20">
         <FlyingCats />
         <div className="text-center px-4 max-w-4xl">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            Экскурсии в институты<br/>Сибирского отделения<br/>Российской академии наук
+            Экскурсии в институты<span className="hidden sm:inline"><br/>Сибирского отделения<br/>Российской академии наук</span><span className="sm:hidden"> СО РАН</span>
           </h1>
           <p className="text-lg sm:text-xl text-gray-200 leading-relaxed">
             Посетите ведущие научные институты и познакомьтесь<br/>с современными исследованиями
