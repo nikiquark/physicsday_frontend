@@ -72,13 +72,14 @@ const InstituteCard = ({ institute, onSelect, isSelected }: InstituteCardProps) 
       <div className="relative z-10 p-6 h-full flex flex-col justify-between text-white">
         <div>
           <h3 className="text-xl font-bold mb-4 leading-tight">{institute.name}</h3>
-        </div>
-        
-        <div className="space-y-2">
-          <div className="flex items-center text-sm">
+          <div className="flex items-center text-lg">
             <Clock className="w-4 h-4 mr-2" />
             {institute.time}
           </div>
+        </div>
+        
+        <div className="space-y-2">
+          
           <div className="flex items-center text-sm">
             <MapPin className="w-4 h-4 mr-2" />
             {institute.adress}
@@ -266,10 +267,10 @@ export default function ExcursionPage() {
         <FlyingCats />
         <div className="text-center px-4 max-w-4xl">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            Экскурсии в институты Сибирского отделения Российской академии наук
+            Экскурсии в институты<br/>Сибирского отделения<br/>Российской академии наук
           </h1>
           <p className="text-lg sm:text-xl text-gray-200 leading-relaxed">
-            Посетите ведущие научные институты и познакомьтесь с современными исследованиями
+            Посетите ведущие научные институты и познакомьтесь<br/>с современными исследованиями
           </p>
         </div>
       </section>
@@ -286,7 +287,7 @@ export default function ExcursionPage() {
       {/* Institutes Section */}
       <section className="py-8 bg-gray-50">
         <FadeInSection>
-          <h2 className="text-center text-3xl font-bold mb-4">Доступные институты</h2>
+          <h2 className="text-center text-3xl font-bold mb-4">Доступные экскурсии</h2>
           <p className="text-center text-gray-600 font-bold mb-12 max-w-4xl mx-auto px-4">
             Выберите <span className="underline font-extrabold">один</span> интересующий вас институт для экскурсии.
           </p>
