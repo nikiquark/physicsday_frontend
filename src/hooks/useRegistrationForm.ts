@@ -23,7 +23,16 @@ export interface WorkshopFormData extends StudentFormData {
   selectedWorkshop: number | null;
 }
 
-type FormDataType = BaseFormData | PhysicsDayFormData | StudentFormData | WorkshopFormData;
+export interface ExcursionFormData extends BaseFormData {
+  passport: string;
+  underages_count: number;
+  underages: string;
+  ageConfirmation: boolean;
+  citizenshipConfirmation: boolean;
+  selectedInstitute: number | null;
+}
+
+type FormDataType = BaseFormData | PhysicsDayFormData | StudentFormData | WorkshopFormData | ExcursionFormData;
 
 interface UseRegistrationFormProps<T extends FormDataType> {
   initialData: T;
@@ -39,12 +48,34 @@ export function useRegistrationForm<T extends FormDataType>({
   const [formData, setFormData] = useState<T>(initialData);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-    }));
+    
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData(prev => ({
+        ...prev,
+        [name]: checked
+      }));
+    } else if (type === 'number') {
+      // Handle empty underages_count field - allow empty string, convert to 0 on submit
+      if (name === 'underages_count') {
+        setFormData(prev => ({
+          ...prev,
+          [name]: value === '' ? 0 : parseInt(value, 10) || 0
+        }));
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          [name]: parseInt(value, 10) || 0
+        }));
+      }
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const validateEmail = (email: string): boolean => {
@@ -59,7 +90,19 @@ export function useRegistrationForm<T extends FormDataType>({
   };
 
   const validateRequired = (data: T): string | null => {
-    const requiredFields = ['name', 'email', 'phone', 'city'];
+    const baseRequiredFields = ['name', 'email', 'phone'];
+    
+    // Add conditional required fields based on form type
+    const requiredFields = [...baseRequiredFields];
+    
+    if ('city' in data) {
+      requiredFields.push('city');
+    }
+    
+    if ('passport' in data) {
+      requiredFields.push('passport');
+    }
+
     const emptyFields = requiredFields.filter(field => !data[field as keyof T]);
     
     if (emptyFields.length > 0) {
@@ -160,6 +203,30 @@ export const validateWorkshopForm = (data: WorkshopFormData): string | null => {
   
   if (!data.selectedWorkshop) {
     return 'Необходимо выбрать мастер-класс для регистрации.';
+  }
+  
+  return null;
+};
+
+export const validateExcursionForm = (data: ExcursionFormData): string | null => {
+  if (!data.selectedInstitute) {
+    return 'Необходимо выбрать институт для регистрации.';
+  }
+  
+  if (!data.ageConfirmation) {
+    return 'Необходимо подтвердить, что вам исполнилось 18 лет.';
+  }
+
+  if (!data.citizenshipConfirmation) {
+    return 'Необходимо подтвердить, что вы являетесь гражданином РФ.';
+  }
+  
+  if (data.underages_count < 0) {
+    return 'Количество детей не может быть отрицательным.';
+  }
+  
+  if (data.underages_count > 0 && !data.underages.trim()) {
+    return 'Если указано количество детей, необходимо заполнить информацию о них.';
   }
   
   return null;

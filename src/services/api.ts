@@ -26,6 +26,16 @@ export interface WorkshopParticipantData extends BaseParticipantData {
   workshop: number;
 }
 
+export interface ExcursionParticipantData {
+  name: string;
+  email: string;
+  phone: string;
+  passport: string;
+  underages_count: number;
+  underages: string;
+  institute: number;
+}
+
 // Response types for created participants (what DRF returns)
 export interface CreatedParticipant {
   id: number;
@@ -53,6 +63,17 @@ export interface CreatedWorkshopParticipant extends CreatedParticipant {
   workshop: number;
 }
 
+export interface CreatedExcursionParticipant {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  passport: string;
+  underages_count: number;
+  underages: string;
+  institute: number;
+}
+
 export interface Workshop {
   id: number;
   name: string;
@@ -63,6 +84,17 @@ export interface Workshop {
   limit_left: number;
   ordering: number;
   image: string;
+}
+
+export interface Institute {
+  id: number;
+  name: string;
+  limit: number;
+  limit_left: number;
+  time: string;
+  image: string;
+  adress: string;
+  ordering: number;
 }
 
 export interface ApiResponse<T> {
@@ -155,9 +187,22 @@ class ApiService {
     });
   }
 
+  // Excursion participants
+  async createExcursionParticipant(data: ExcursionParticipantData): Promise<CreatedExcursionParticipant> {
+    return this.makeRequest<CreatedExcursionParticipant>('/excursions/participants', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
   // Workshops
   async getWorkshops(): Promise<Workshop[]> {
     return this.makeRequest<Workshop[]>('/workshops/');
+  }
+
+  // Institutes
+  async getInstitutes(): Promise<Institute[]> {
+    return this.makeRequest<Institute[]>('/excursions/');
   }
 }
 
@@ -184,7 +229,7 @@ export const getErrorMessage = (error: unknown): string => {
     // Проверяем на ошибку дублирования участника
     if (error.details?.non_field_errors) {
       const duplicateError = error.details.non_field_errors.find(err => 
-        err.includes('Вы уже зарегистрировались на')
+        err.includes('Вы уже зарегистрировались на') || err.includes('Вы уже записались на')
       );
       if (duplicateError) {
         return duplicateError;
@@ -199,7 +244,7 @@ export const getErrorMessage = (error: unknown): string => {
         }
         return 'Проверьте правильность заполнения всех полей.';
       case 406:
-        return 'К сожалению, места на этот мастер-класс закончились.';
+        return 'К сожалению, места закончились.';
       case 500:
         return 'Ошибка сервера. Попробуйте позже.';
       default:
