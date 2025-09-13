@@ -266,7 +266,7 @@ export default function ExcursionPage() {
         <FlyingCats />
         <div className="text-center px-4 max-w-4xl">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            Экскурсии в институты
+            Экскурсии в институты Сибирского отделения Российской академии наук
           </h1>
           <p className="text-lg sm:text-xl text-gray-200 leading-relaxed">
             Посетите ведущие научные институты и познакомьтесь с современными исследованиями
@@ -278,7 +278,7 @@ export default function ExcursionPage() {
       <section className="py-4 bg-yellow-50 border-b border-yellow-200">
         <div className="text-center px-4 max-w-5xl mx-auto">
           <p className="text-yellow-800 font-semibold">
-            В соответствии с внутренними правилами институтов, вход на территорию разрешён только гражданам&nbsp;РФ
+            В соответствии с внутренними правилами институтов, вход на территорию разрешён только гражданам&nbsp;РФ.
           </p>
         </div>
       </section>
