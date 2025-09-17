@@ -141,4 +141,9 @@ export const PARTNERS: PartnerItem[] = [
     logo: "/logos/softlab.png",
     website: "https://www.softlab.tv/"
   },
+  {
+    name: "PetroGM",
+    logo: "/logos/pgm.jpg",
+    website: "https://petrogm.com/"
+  },
 ];
