@@ -166,7 +166,7 @@ export default function OlympiadPage() {
                 <Clock className="w-6 h-6 text-red-300" />
                 <div>
                   <div className="font-semibold">Регистрация</div>
-                  <div className="text-gray-200">до 10:00 3 октября</div>
+                  <div className="text-gray-200">до 10:00 2 октября</div>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
