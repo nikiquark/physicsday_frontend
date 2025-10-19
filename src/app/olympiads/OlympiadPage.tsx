@@ -222,7 +222,17 @@ export default function OlympiadPage() {
       </section>
 
       {/* Registration Section */}
-      <section id="register" className="py-8 bg-white px-4">
+      <section id="register" className="py-30 bg-white px-4">
+        <FadeInSection>
+          <h2 className="text-center text-3xl font-bold mb-12">Регистрация закрыта</h2>
+          <div className="max-w-xl mx-auto">
+            <p className="text-center text-gray-600 text-lg">
+              Регистрация на олимпиады завершена.<br/>Следите за обновлениями на нашем сайте.
+            </p>
+          </div>
+        </FadeInSection>
+      </section>
+      {/* <section id="register" className="py-8 bg-white px-4">
         <FadeInSection>
           <h2 className="text-center text-3xl font-bold mb-1">Регистрация на олимпиаду</h2>
           <p className="text-center text-gray-600 mb-12 font-bold text-xl">(только для школьников)</p>
@@ -315,7 +325,7 @@ export default function OlympiadPage() {
             </p>
           </div>
         </FadeInSection>
-      </section>
+      </section> */}
 
       {/* Footer */}
       <Footer />

@@ -120,7 +120,7 @@ export default function ExcursionPage() {
   const [isOpen, modalContent, showModal, closeModal] = useModal();
   
   // Use excursions hook
-  const { institutes, loading, error, refreshInstitutes } = useExcursions();
+  // const { institutes, loading, error, refreshInstitutes } = useExcursions();
 
   const handleFormSubmit = async (data: ExcursionFormData) => {
     try {
@@ -144,7 +144,7 @@ export default function ExcursionPage() {
       );
       
       // Refresh institutes data to get updated limit_left
-      await refreshInstitutes();
+      // await refreshInstitutes();
       
       // Reset selected institute
       setSelectedInstitute(null);
@@ -162,7 +162,7 @@ export default function ExcursionPage() {
           'К сожалению, места в этот институт закончились.'
         );
         // Refresh institutes to update limit_left
-        await refreshInstitutes();
+        // await refreshInstitutes();
       } else {
         showModal(
           'error',
@@ -220,42 +220,42 @@ export default function ExcursionPage() {
     }
   };
 
-  const selectedInstituteData = institutes.find(i => i.id === selectedInstitute);
+  // const selectedInstituteData = institutes.find(i => i.id === selectedInstitute);
 
-  if (loading) {
-    return (
-      <main className="font-sans text-gray-900 scroll-smooth">
-        <Header />
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#344EAD] mx-auto"></div>
-            <p className="mt-4 text-gray-600">Загрузка институтов...</p>
-          </div>
-        </div>
-        <Footer />
-      </main>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <main className="font-sans text-gray-900 scroll-smooth">
+  //       <Header />
+  //       <div className="min-h-screen flex items-center justify-center">
+  //         <div className="text-center">
+  //           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#344EAD] mx-auto"></div>
+  //           <p className="mt-4 text-gray-600">Загрузка институтов...</p>
+  //         </div>
+  //       </div>
+  //       <Footer />
+  //     </main>
+  //   );
+  // }
 
-  if (error) {
-    return (
-      <main className="font-sans text-gray-900 scroll-smooth">
-        <Header />
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-red-600 mb-4">{error}</p>
-            <button 
-              onClick={() => window.location.reload()} 
-              className="bg-[#344EAD] text-white px-6 py-2 rounded-xl hover:bg-[#2a3f92]"
-            >
-              Обновить страницу
-            </button>
-          </div>
-        </div>
-        <Footer />
-      </main>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <main className="font-sans text-gray-900 scroll-smooth">
+  //       <Header />
+  //       <div className="min-h-screen flex items-center justify-center">
+  //         <div className="text-center">
+  //           <p className="text-red-600 mb-4">{error}</p>
+  //           <button 
+  //             onClick={() => window.location.reload()} 
+  //             className="bg-[#344EAD] text-white px-6 py-2 rounded-xl hover:bg-[#2a3f92]"
+  //           >
+  //             Обновить страницу
+  //           </button>
+  //         </div>
+  //       </div>
+  //       <Footer />
+  //     </main>
+  //   );
+  // }
 
   return (
     <main className="font-sans text-gray-900 scroll-smooth">
@@ -276,16 +276,16 @@ export default function ExcursionPage() {
       </section>
 
       {/* Citizenship Notice */}
-      <section className="py-4 bg-yellow-50 border-b border-yellow-200">
+      {/* <section className="py-4 bg-yellow-50 border-b border-yellow-200">
         <div className="text-center px-4 max-w-5xl mx-auto">
           <p className="text-yellow-800 font-semibold">
             В соответствии с внутренними правилами институтов, вход на территорию разрешён только гражданам&nbsp;РФ.
           </p>
         </div>
-      </section>
+      </section> */}
 
       {/* Institutes Section */}
-      <section className="py-8 bg-gray-50">
+      {/* <section className="py-8 bg-gray-50">
         <FadeInSection>
           <h2 className="text-center text-3xl font-bold mb-4">Доступные экскурсии</h2>
           <p className="text-center text-gray-600 font-bold mb-12 max-w-4xl mx-auto px-4">
@@ -310,10 +310,20 @@ export default function ExcursionPage() {
             </div>
           )}
         </FadeInSection>
-      </section>
+      </section> */}
 
       {/* Registration Section */}
-      <section id="registration" className="py-8 bg-white px-4">
+      <section id="register" className="py-30 bg-white px-4">
+        <FadeInSection>
+          <h2 className="text-center text-3xl font-bold mb-12">Регистрация закрыта</h2>
+          <div className="max-w-xl mx-auto">
+            <p className="text-center text-gray-600 text-lg">
+              Регистрация на экскурсии завершена.<br/>Следите за обновлениями на нашем сайте.
+            </p>
+          </div>
+        </FadeInSection>
+      </section>
+      {/* <section id="registration" className="py-8 bg-white px-4">
         <FadeInSection>
           <h2 className="text-center text-3xl font-bold mb-4">Регистрация на экскурсию</h2>
           <p className="text-center text-gray-600 mb-12 font-bold text-xl flex items-center justify-center"><Info className="mr-1" size={24} />  регистрацию детей осуществляют сопровождающие их лица</p>
@@ -450,7 +460,7 @@ export default function ExcursionPage() {
             )}
           </div>
         </FadeInSection>
-      </section>
+      </section> */}
 
       {/* Footer */}
       <Footer />

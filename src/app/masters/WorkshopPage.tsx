@@ -137,7 +137,7 @@ export default function WorkshopsPage() {
   const [isOpen, modalContent, showModal, closeModal] = useModal();
   
   // Use workshops hook
-  const { workshops, loading, error, refreshWorkshops } = useWorkshops();
+  // const { workshops, loading, error, refreshWorkshops } = useWorkshops();
 
   const handleFormSubmit = async (data: WorkshopFormData) => {
     try {
@@ -161,7 +161,7 @@ export default function WorkshopsPage() {
       );
       
       // Refresh workshops data to get updated limit_left
-      await refreshWorkshops();
+      // await refreshWorkshops();
       
       // Reset selected workshop
       setSelectedWorkshop(null);
@@ -179,7 +179,7 @@ export default function WorkshopsPage() {
           'К сожалению, места на этот мастер-класс закончились.'
         );
         // Refresh workshops to update limit_left
-        await refreshWorkshops();
+        // await refreshWorkshops();
       } else {
         showModal(
           'error',
@@ -236,42 +236,42 @@ export default function WorkshopsPage() {
     }
   };
 
-  const selectedWorkshopData = workshops.find(w => w.id === selectedWorkshop);
+  // const selectedWorkshopData = workshops.find(w => w.id === selectedWorkshop);
 
-  if (loading) {
-    return (
-      <main className="font-sans text-gray-900 scroll-smooth">
-        <Header />
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#344EAD] mx-auto"></div>
-            <p className="mt-4 text-gray-600">Загрузка мастер-классов...</p>
-          </div>
-        </div>
-        <Footer />
-      </main>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <main className="font-sans text-gray-900 scroll-smooth">
+  //       <Header />
+  //       <div className="min-h-screen flex items-center justify-center">
+  //         <div className="text-center">
+  //           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#344EAD] mx-auto"></div>
+  //           <p className="mt-4 text-gray-600">Загрузка мастер-классов...</p>
+  //         </div>
+  //       </div>
+  //       <Footer />
+  //     </main>
+  //   );
+  // }
 
-  if (error) {
-    return (
-      <main className="font-sans text-gray-900 scroll-smooth">
-        <Header />
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-red-600 mb-4">{error}</p>
-            <button 
-              onClick={() => window.location.reload()} 
-              className="bg-[#344EAD] text-white px-6 py-2 rounded-xl hover:bg-[#2a3f92]"
-            >
-              Обновить страницу
-            </button>
-          </div>
-        </div>
-        <Footer />
-      </main>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <main className="font-sans text-gray-900 scroll-smooth">
+  //       <Header />
+  //       <div className="min-h-screen flex items-center justify-center">
+  //         <div className="text-center">
+  //           <p className="text-red-600 mb-4">{error}</p>
+  //           <button 
+  //             onClick={() => window.location.reload()} 
+  //             className="bg-[#344EAD] text-white px-6 py-2 rounded-xl hover:bg-[#2a3f92]"
+  //           >
+  //             Обновить страницу
+  //           </button>
+  //         </div>
+  //       </div>
+  //       <Footer />
+  //     </main>
+  //   );
+  // }
 
   return (
     <main className="font-sans text-gray-900 scroll-smooth">
@@ -292,18 +292,18 @@ export default function WorkshopsPage() {
       </section>
 
       {/* Workshops Section */}
-      <section className="py-8 bg-gray-50">
+      <section className="py-30  bg-gray-50">
         <h2 className="text-center text-3xl font-bold mb-4">Доступные мастер&#x2011;классы</h2>
         <p className="text-center text-gray-600 font-bold mb-12 max-w-4xl mx-auto px-4">
           Выберите <span className="underline font-extrabold">один</span> интересующий вас мастер&#x2011;класс, кликнув по карточке, и пройдите регистрацию.
         </p>
           
         <FadeInSection>
-          {workshops.length === 0 ? (
+          {/* {workshops.length === 0 ? ( */}
             <div className="text-center text-gray-600">
               <p>Мастер-классы пока не доступны</p>
             </div>
-          ) : (
+          {/* ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 max-w-7xl mx-auto">
               {workshops.map((workshop, index) => (
                 <SequentialFadeIn key={workshop.id} index={index}>
@@ -315,12 +315,22 @@ export default function WorkshopsPage() {
                 </SequentialFadeIn>
               ))}
             </div>
-          )}
+          )} */}
         </FadeInSection>
       </section>
 
       {/* Registration Section */}
-      <section id="registration" className="py-8 bg-white px-4">
+      <section id="register" className="py-30 bg-white px-4">
+        <FadeInSection>
+          <h2 className="text-center text-3xl font-bold mb-12">Регистрация закрыта</h2>
+          <div className="max-w-xl mx-auto">
+            <p className="text-center text-gray-600 text-lg">
+              Регистрация на мастер-классы завершена.<br/>Следите за обновлениями на нашем сайте.
+            </p>
+          </div>
+        </FadeInSection>
+      </section>
+      {/* <section id="registration" className="py-8 bg-white px-4">
         <FadeInSection>
           <h2 className="text-center text-3xl font-bold mb-4">Регистрация на мастер-класс</h2>
           <p className="text-center text-gray-600 mb-12 font-bold text-xl">(для школьников и дошкольников)</p>
@@ -436,7 +446,7 @@ export default function WorkshopsPage() {
             )}
           </div>
         </FadeInSection>
-      </section>
+      </section> */}
 
       {/* Footer */}
       <Footer />

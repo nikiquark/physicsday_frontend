@@ -197,12 +197,10 @@ export default function Home() {
       </section>
 
       {/* Additional Registration Section */}
-      <section className="pt-0 pb-12 bg-gray-50">
+      {/* <section className="pt-0 pb-12 bg-gray-50">
         <FadeInSection>
-          {/* <h2 className="text-center text-3xl font-bold mb-12">Дополнительные события</h2> */}
           <div className="max-w-6xl mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Мастер-классы */}
               <a 
                 href="/masters" 
                 className="group border-2 border-[#344EAD] hover:bg-[#344EAD] transition-all duration-300 rounded-2xl p-8 flex flex-col items-center justify-start min-h-[200px] hover:shadow-lg"
@@ -217,7 +215,6 @@ export default function Home() {
                 </div>
               </a>
 
-              {/* Олимпиада */}
               <a 
                 href="/olympiads" 
                 className="group border-2 border-[#344EAD] hover:bg-[#344EAD] transition-all duration-300 rounded-2xl p-8 flex flex-col items-center justify-start min-h-[200px] hover:shadow-lg"
@@ -232,7 +229,6 @@ export default function Home() {
                 </div>
               </a>
 
-              {/* Экскурсии */}
               <a 
                 href="/excursions" 
                 className="group border-2 border-[#344EAD] hover:bg-[#344EAD] transition-all duration-300 rounded-2xl p-8 flex flex-col items-center justify-start min-h-[200px] hover:shadow-lg md:col-span-2 lg:col-span-1"
@@ -249,10 +245,20 @@ export default function Home() {
             </div>
           </div>
         </FadeInSection>
-      </section>
+      </section> */}
 
       {/* Registration Section */}
-      <section id="register" className="pt-4 pb-12 bg-white px-4">
+      <section id="register" className="py-30 bg-white px-4">
+        <FadeInSection>
+          <h2 className="text-center text-3xl font-bold mb-12">Регистрация закрыта</h2>
+          <div className="max-w-xl mx-auto">
+            <p className="text-center text-gray-600 text-lg">
+              Регистрация на ФизФест завершена.<br/>Следите за обновлениями на нашем сайте.
+            </p>
+          </div>
+        </FadeInSection>
+      </section>
+      {/* <section id="register" className="pt-4 pb-12 bg-white px-4">
         <FadeInSection>
           <h2 className="text-center text-3xl font-bold mb-12">Регистрация на ФизФест</h2>
           <div className="max-w-xl mx-auto grid gap-6">
@@ -354,7 +360,7 @@ export default function Home() {
             </p>
           </div>
         </FadeInSection>
-      </section>
+      </section> */}
 
       {/* Location Section */}
       <section id="location" className="py-8 bg-gray-50">
